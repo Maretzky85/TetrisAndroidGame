@@ -1,10 +1,10 @@
 package com.sikoramarek.tetrisgame.model;
 
-import android.graphics.Canvas;
+import java.util.ArrayList;
 
 public interface Block {
 
-    public void draw(Canvas canvas);
+    public ArrayList<int[]> getPositions();
 
     public void update();
 

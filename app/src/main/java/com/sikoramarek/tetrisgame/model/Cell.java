@@ -7,7 +7,7 @@ public class Cell {
         yPos = y;
     }
 
-    public final int xPos;
-    public final int yPos;
+    public int xPos;
+    public int yPos;
 
 }

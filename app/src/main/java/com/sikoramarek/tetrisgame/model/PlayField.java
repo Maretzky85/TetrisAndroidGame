@@ -2,7 +2,6 @@ package com.sikoramarek.tetrisgame.model;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -30,8 +29,8 @@ public class PlayField {
         screenHeight = height;
         screenWidth = width;
 
-        cellWidth = screenWidth/11;
-        cellHeight = screenHeight/22;
+        cellWidth = screenWidth/10;
+        cellHeight = screenHeight/20;
 
 //        activeCellImage.setWidth(cellWidth);
 //        activeCellImage.setHeight(cellHeight);
@@ -52,14 +51,51 @@ public class PlayField {
                     activeBlock = new LineBlock(5,0);
                 }
             }
-            if (position[1] == 20){
+            if (position[1] == 19){
                 placeActiveBlock();
                 activeBlock = new LineBlock(5,0);
-                Log.i("new", "block");
                 return;
             }
         }
         activeBlock.update();
+    }
+
+    private void checkLines() {
+        int[] lines = new int[21];
+        for (int i = 0; i < lines.length; i++) {
+            lines[i] = 0;
+        }
+        for (Cell cell : inactiveCells
+                ) {
+            lines[cell.yPos]++;
+        }
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i] >= 10){
+                deleteLine(i);
+            }
+        }
+    }
+
+    private void deleteLine(int y) {
+        ArrayList<Cell> cellsToRemove = new ArrayList<>();
+        for (Cell cell : inactiveCells
+        ) {
+            if (cell.yPos == y){
+                cellsToRemove.add(cell);
+            }
+        }
+        for (Cell cell : cellsToRemove
+             ) {
+            inactiveCells.remove(cell);
+        }
+
+        for (Cell cell : inactiveCells
+                ) {
+            if (cell.yPos < y){
+                cell.yPos += 1;
+            }
+        }
     }
 
     private void placeActiveBlock() {
@@ -68,7 +104,7 @@ public class PlayField {
         ){
             inactiveCells.add(new Cell(position[0], position[1]));
         }
-        return;
+        checkLines();
     }
 
     public void draw(Canvas canvas){
@@ -107,7 +143,7 @@ public class PlayField {
         ArrayList<int[]> positions = activeBlock.getPositions();
         for (int[] position : positions
         ) {
-            if (position[0] == 10) {
+            if (position[0] == 9) {
                 return;
             }
 

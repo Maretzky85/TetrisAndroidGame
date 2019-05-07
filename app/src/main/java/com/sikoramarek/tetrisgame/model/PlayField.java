@@ -31,7 +31,7 @@ public class PlayField {
         screenWidth = width;
 
         cellWidth = screenWidth/11;
-        cellHeight = screenHeight/22*;
+        cellHeight = screenHeight/22;
 
 //        activeCellImage.setWidth(cellWidth);
 //        activeCellImage.setHeight(cellHeight);

@@ -14,8 +14,6 @@ public class PlayField {
     private int screenWidth;
     private int screenHeight;
 
-    private Cell[][] playField;
-
     private Block activeBlock;
 
     private ArrayList<Cell> inactiveCells;
@@ -32,8 +30,8 @@ public class PlayField {
         screenHeight = height;
         screenWidth = width;
 
-        cellWidth = screenWidth/10;
-        cellHeight = screenHeight/20;
+        cellWidth = screenWidth/11;
+        cellHeight = screenHeight/22*;
 
 //        activeCellImage.setWidth(cellWidth);
 //        activeCellImage.setHeight(cellHeight);
@@ -86,4 +84,47 @@ public class PlayField {
 
     }
 
+    public void left() {
+        ArrayList<int[]> positions = activeBlock.getPositions();
+        for (int[] position : positions
+                ) {
+            if (position[0] == 0){
+                return;
+            }
+
+            for (Cell cell : inactiveCells
+                    ) {
+                if (cell.yPos == position[1] && cell.xPos == position[0]-1){
+                    return;
+                }
+            }
+
+        }
+        activeBlock.moveLeft();
+    }
+
+    public void right() {
+        ArrayList<int[]> positions = activeBlock.getPositions();
+        for (int[] position : positions
+        ) {
+            if (position[0] == 10) {
+                return;
+            }
+
+            for (Cell cell : inactiveCells
+            ) {
+                if (cell.yPos == position[1] && cell.xPos == position[0]+1){
+                    return;
+                }
+            }
+        }
+
+
+
+            activeBlock.moveRight();
+    }
+
+    public void click() {
+        activeBlock.transform();
+    }
 }

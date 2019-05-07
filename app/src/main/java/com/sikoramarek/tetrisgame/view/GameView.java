@@ -1,5 +1,6 @@
 package com.sikoramarek.tetrisgame.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.sikoramarek.tetrisgame.MainThread;
 import com.sikoramarek.tetrisgame.R;
@@ -21,6 +23,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private long updateTime;
     private int speed = 200;
 
+    private long touchTime;
+    private int touchXPos;
+    private int touchYPos;
+
+    @SuppressLint("ClickableViewAccessibility")
     public GameView(Context context){
 
         super(context);
@@ -34,30 +41,46 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         );
         thread = new MainThread(getHolder(), this, playField);
 
+        this.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
 
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        touchXPos = x;
+                        touchYPos = y;
+                        touchTime = System.currentTimeMillis();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int deltaX = touchXPos - x;
 
+                        if (deltaX > 20){
+                            touchXPos = x;
+                            playField.left();
+                            break;
+                        }
+
+                        if (deltaX < -20){
+                            touchXPos = x;
+                            playField.right();
+                            break;
+                        }
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (System.currentTimeMillis() - touchTime < 100){
+                            playField.click();
+                        }
+                        Log.i("TAG", "touched up");
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Log.i("TAG", "touched down");
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.i("TAG", "moving: (" + x + ", " + y + ")");
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.i("TAG", "touched up");
-                break;
-        }
-        return super.onTouchEvent(event);
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {

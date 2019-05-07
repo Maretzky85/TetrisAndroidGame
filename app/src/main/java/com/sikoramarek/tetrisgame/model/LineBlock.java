@@ -1,7 +1,5 @@
 package com.sikoramarek.tetrisgame.model;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class LineBlock implements Block{

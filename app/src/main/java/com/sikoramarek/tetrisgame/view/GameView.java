@@ -15,13 +15,16 @@ import com.sikoramarek.tetrisgame.MainThread;
 import com.sikoramarek.tetrisgame.R;
 import com.sikoramarek.tetrisgame.model.PlayField;
 
+import java.util.logging.Logger;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
     private PlayField playField;
 
     private long updateTime;
-    private int speed = 200;
+    private int speed = 800;
+    private int sensivity = 80;
 
     private long touchTime;
     private int touchXPos;
@@ -55,25 +58,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         break;
                     case MotionEvent.ACTION_MOVE:
                         int deltaX = touchXPos - x;
+                        int deltaY = touchYPos - y;
 
-                        if (deltaX > 20){
+                        if (deltaX > sensivity){
                             touchXPos = x;
                             playField.left();
                             break;
-                        }
-
-                        if (deltaX < -20){
+                        }else
+                        if (deltaX < -sensivity){
                             touchXPos = x;
                             playField.right();
                             break;
-                        }
+                        }else
+                            if (deltaY < -sensivity){
+                                touchYPos = y;
+                                synchronized (playField){
+                                    playField.update();
+                                }
+                                break;
+                            }
 
                         break;
                     case MotionEvent.ACTION_UP:
                         if (System.currentTimeMillis() - touchTime < 100){
                             playField.click();
                         }
-                        Log.i("TAG", "touched up");
                         break;
                 }
                 return true;
@@ -110,7 +119,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void update(){
         if (System.currentTimeMillis() - updateTime > speed){
-            playField.update();
+            synchronized (playField){
+                playField.update();
+            }
             updateTime = System.currentTimeMillis();
         }
 

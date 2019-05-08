@@ -4,8 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Vector;
 
 public class PlayField {
+    Random randomGenerator;
 
     private Bitmap activeCellImage;
     private Bitmap inactiveCellImage;
@@ -15,49 +19,75 @@ public class PlayField {
 
     private Block activeBlock;
 
-    private ArrayList<Cell> inactiveCells;
+    private Vector<Cell> inactiveCells;
 
     private int cellWidth;
     private int cellHeight;
+    private boolean updating;
 
     public PlayField(Bitmap active, Bitmap inactive, int width, int height){
-        inactiveCells = new ArrayList<>(20);
+        inactiveCells = new Vector<>(20);
 
-        activeCellImage = active;
-        inactiveCellImage = inactive;
-
-        screenHeight = height;
+        screenHeight = height-100;
         screenWidth = width;
 
         cellWidth = screenWidth/10;
         cellHeight = screenHeight/20;
 
-//        activeCellImage.setWidth(cellWidth);
-//        activeCellImage.setHeight(cellHeight);
-//        inactiveCellImage.setWidth(cellWidth);
-//        inactiveCellImage.setHeight(cellHeight);
+        activeCellImage = Bitmap.createScaledBitmap(active, cellWidth, cellHeight, false);
+        inactiveCellImage = Bitmap.createScaledBitmap(inactive, cellWidth, cellHeight, false);
 
-        activeBlock = new LineBlock(5,0);
+//        activeBlock = new LBlock(5,10);
+        randomGenerator = new Random();
+        activeBlock = getRandomBlock();
+
     }
 
-    public void update(){
-        ArrayList<int[]> positions = activeBlock.getPositions();
-        for (int[] position: positions
-        ){
-            for (Cell cell : inactiveCells
+    private Block getRandomBlock() {
+        int random = randomGenerator.nextInt(7000);
+        if (random < 1000){
+            return new OBlock(5,1);
+        }
+        if (random < 2000){
+            return new TBlock(5,1);
+        }
+        if (random < 3000){
+            return new IBlock(5,2);
+        }
+        if (random < 4000){
+            return new LBlock(5,2);
+        }
+        if (random < 5000){
+            return new SBlock(5,2);
+        }
+        if (random < 6000){
+            return new ZBlock(5,2);
+        }
+        else {
+            return new JBlock(5,2);
+        }
+
+    }
+
+    public synchronized void update(){
+            ArrayList<int[]> positions = activeBlock.getPositions();
+            for (int[] position: positions
+            ){
+                synchronized (inactiveCells){
+                    for (Cell cell : inactiveCells
                     ) {
-                if (cell.yPos == position[1]+1 && cell.xPos == position[0]){
-                    placeActiveBlock();
-                    activeBlock = new LineBlock(5,0);
+                        if (cell.yPos == position[1]+1 && cell.xPos == position[0]){
+                            placeActiveBlock(activeBlock);
+                            return;
+                        }
+                    }
+                }
+                if (position[1] == 19){
+                    placeActiveBlock(activeBlock);
+                    return;
                 }
             }
-            if (position[1] == 19){
-                placeActiveBlock();
-                activeBlock = new LineBlock(5,0);
-                return;
-            }
-        }
-        activeBlock.update();
+            activeBlock.update();
     }
 
     private void checkLines() {
@@ -67,7 +97,9 @@ public class PlayField {
         }
         for (Cell cell : inactiveCells
                 ) {
-            lines[cell.yPos]++;
+            if (cell.yPos > 0){
+                lines[cell.yPos]++;
+            }
         }
 
         for (int i = 0; i < lines.length; i++) {
@@ -75,19 +107,16 @@ public class PlayField {
                 deleteLine(i);
             }
         }
+        updating = false;
     }
 
     private void deleteLine(int y) {
-        ArrayList<Cell> cellsToRemove = new ArrayList<>();
-        for (Cell cell : inactiveCells
-        ) {
+        Iterator<Cell> inactiveIterator = inactiveCells.iterator();
+        while (inactiveIterator.hasNext()){
+            Cell cell = inactiveIterator.next();
             if (cell.yPos == y){
-                cellsToRemove.add(cell);
+                inactiveIterator.remove();
             }
-        }
-        for (Cell cell : cellsToRemove
-             ) {
-            inactiveCells.remove(cell);
         }
 
         for (Cell cell : inactiveCells
@@ -98,8 +127,9 @@ public class PlayField {
         }
     }
 
-    private void placeActiveBlock() {
-        ArrayList<int[]> positions = activeBlock.getPositions();
+    private void placeActiveBlock(Block block) {
+        activeBlock = getRandomBlock();
+        ArrayList<int[]> positions = block.getPositions();
         for (int[] position: positions
         ){
             inactiveCells.add(new Cell(position[0], position[1]));
@@ -121,46 +151,48 @@ public class PlayField {
     }
 
     public void left() {
-        ArrayList<int[]> positions = activeBlock.getPositions();
-        for (int[] position : positions
-                ) {
-            if (position[0] == 0){
-                return;
-            }
-
-            for (Cell cell : inactiveCells
-                    ) {
-                if (cell.yPos == position[1] && cell.xPos == position[0]-1){
+        if (activeBlock!=null){
+            ArrayList<int[]> positions = activeBlock.getPositions();
+            for (int[] position : positions
+            ) {
+                if (position[0] == 0){
                     return;
                 }
-            }
 
+                for (Cell cell : inactiveCells
+                ) {
+                    if (cell.yPos == position[1] && cell.xPos == position[0]-1){
+                        return;
+                    }
+                }
+
+            }
+            activeBlock.moveLeft();
         }
-        activeBlock.moveLeft();
     }
 
     public void right() {
-        ArrayList<int[]> positions = activeBlock.getPositions();
-        for (int[] position : positions
-        ) {
-            if (position[0] == 9) {
-                return;
-            }
-
-            for (Cell cell : inactiveCells
+        if (activeBlock!=null){
+            ArrayList<int[]> positions = activeBlock.getPositions();
+            for (int[] position : positions
             ) {
-                if (cell.yPos == position[1] && cell.xPos == position[0]+1){
+                if (position[0] == 9) {
                     return;
                 }
+
+                for (Cell cell : inactiveCells
+                ) {
+                    if (cell.yPos == position[1] && cell.xPos == position[0]+1){
+                        return;
+                    }
+                }
             }
-        }
-
-
-
             activeBlock.moveRight();
+        }
     }
 
     public void click() {
         activeBlock.transform();
     }
+
 }

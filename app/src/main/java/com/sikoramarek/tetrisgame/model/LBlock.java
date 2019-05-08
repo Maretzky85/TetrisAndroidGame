@@ -2,26 +2,33 @@ package com.sikoramarek.tetrisgame.model;
 
 import java.util.ArrayList;
 
-public class LineBlock implements Block{
+public class LBlock implements Block {
 
     private int x, y;
-    private  ArrayList<int[]> positions;
-    private ArrayList<int[]> xTransfrorms;
+
+    private ArrayList<int[]> positions;
+    private ArrayList<int[]> xTransforms;
     private ArrayList<int[]> yTransforms;
     private int currentTransform;
 
-    public LineBlock(int x, int y){
+
+    public LBlock(int x, int y){
         this.x = x;
         this.y = y;
-        currentTransform = 1;
 
-        xTransfrorms = new ArrayList<>(2);
-        xTransfrorms.add(new int[]{-2,-1,0,1});
-        xTransfrorms.add(new int[]{0,0,0,0});
+        currentTransform = 0;
 
-        yTransforms = new ArrayList<>(2);
-        yTransforms.add(new int[]{0,0,0,0});
-        yTransforms.add(new int[]{-2,-1,0,1});
+        xTransforms = new ArrayList<>(4);
+        xTransforms.add(new int[]{-1,0,1,1});
+        xTransforms.add(new int[]{0,-1,-1,-1});
+        xTransforms.add(new int[]{-1,-1,0,1});
+        xTransforms.add(new int[]{0,1,1,1});
+
+        yTransforms = new ArrayList<>(4);
+        yTransforms.add(new int[]{0,0,0,-1});
+        yTransforms.add(new int[]{0,0,-1,-2});
+        yTransforms.add(new int[]{0,-1,-1,-1});
+        yTransforms.add(new int[]{-2,-2,-1,0});
 
         positions = new ArrayList<>(4);
         for (int i = 0; i < 4; i++) {
@@ -32,7 +39,7 @@ public class LineBlock implements Block{
 
     @Override
     public ArrayList<int[]> getPositions() {
-        int[] xTransform = xTransfrorms.get(currentTransform);
+        int[] xTransform = xTransforms.get(currentTransform);
         int[] yTransform = yTransforms.get(currentTransform);
         for (int i = 0; i < xTransform.length; i++) {
             int[] position = new int[]{x + xTransform[i], y + yTransform[i]};
@@ -48,7 +55,7 @@ public class LineBlock implements Block{
 
     @Override
     public void transform() {
-        if (currentTransform < xTransfrorms.size()-1){
+        if (currentTransform < xTransforms.size()-1){
             currentTransform++;
         }else {
             currentTransform = 0;

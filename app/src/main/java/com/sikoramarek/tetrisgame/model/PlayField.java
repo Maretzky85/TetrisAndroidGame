@@ -139,15 +139,16 @@ public class PlayField {
 
     public void draw(Canvas canvas){
         ArrayList<int[]> positions = activeBlock.getPositions();
-        for (int[] position : positions
-        ) {
-            canvas.drawBitmap(activeCellImage, position[0]*cellWidth, position[1]*cellHeight, null);
+        synchronized(this){
+            for (int[] position : positions
+            ) {
+                canvas.drawBitmap(activeCellImage, position[0]*cellWidth, position[1]*cellHeight, null);
+            }
+            for (Cell cell : inactiveCells
+            ) {
+                canvas.drawBitmap(inactiveCellImage, cell.xPos*cellWidth, cell.yPos*cellHeight, null);
+            }
         }
-        for (Cell cell : inactiveCells
-                ) {
-            canvas.drawBitmap(inactiveCellImage, cell.xPos*cellWidth, cell.yPos*cellHeight, null);
-        }
-
     }
 
     public void left() {

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -15,8 +14,6 @@ import com.sikoramarek.tetrisgame.MainThread;
 import com.sikoramarek.tetrisgame.R;
 import com.sikoramarek.tetrisgame.model.PlayField;
 
-import java.util.logging.Logger;
-
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
@@ -24,7 +21,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private long updateTime;
     private int speed = 800;
-    private int sensivity = 80;
+    private int sensitivity = 80;
 
     private long touchTime;
     private int touchXPos;
@@ -42,7 +39,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 Resources.getSystem().getDisplayMetrics().widthPixels,
                 Resources.getSystem().getDisplayMetrics().heightPixels
         );
-        thread = new MainThread(getHolder(), this, playField);
+        thread = new MainThread(getHolder(), this);
 
         this.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -60,17 +57,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         int deltaX = touchXPos - x;
                         int deltaY = touchYPos - y;
 
-                        if (deltaX > sensivity){
+                        if (deltaX > sensitivity){
                             touchXPos = x;
                             playField.left();
                             break;
                         }else
-                        if (deltaX < -sensivity){
+                        if (deltaX < -sensitivity){
                             touchXPos = x;
                             playField.right();
                             break;
                         }else
-                            if (deltaY < -sensivity){
+                            if (deltaY < -sensitivity){
                                 touchYPos = y;
                                 synchronized (playField){
                                     playField.update();

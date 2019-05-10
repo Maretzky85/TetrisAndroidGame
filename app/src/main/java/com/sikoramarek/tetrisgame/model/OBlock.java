@@ -24,7 +24,7 @@ public class OBlock implements Block {
         for (int i = 0; i < 4; i++) {
             positions.add(i, null);
         }
-        positions.set(0, null);
+//        positions.set(0, null);
     }
 
     @Override

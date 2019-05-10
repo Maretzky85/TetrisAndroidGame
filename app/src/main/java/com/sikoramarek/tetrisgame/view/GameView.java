@@ -6,7 +6,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -43,6 +45,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int touchYPos;
     private Block activeBlocks;
     private Vector<Cell> inactiveBlocks;
+
+    private SurfaceHolder surfaceHolder;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -136,11 +140,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    @Override
+    protected void onDraw(Canvas canvas){
+        super.onDraw(canvas);
+        if (canvas != null){
+            if (activeBlocks != null){
+                ArrayList<int[]> positions = activeBlocks.getPositions();
+                for (int[] position : positions
+                ) {
+                    canvas.drawBitmap(activeCellImage, position[0]*cellWidth, position[1]*cellHeight, null);
+                }
+            }
+            if (inactiveBlocks != null){
+                for (Cell cell : inactiveBlocks
+                ) {
+                    canvas.drawBitmap(inactiveCellImage, cell.xPos*cellWidth, cell.yPos*cellHeight, null);
+                }
+            }
+
+        }
+    }
+
     public void updateView(Block activeBlock, Vector<Cell> inactiveBlock){
         this.activeBlocks = activeBlock;
         this.inactiveBlocks = inactiveBlock;
-//        Canvas canvas = getHolder().lockCanvas();
-//        draw(canvas);
-//        getHolder().unlockCanvasAndPost(canvas);
+        Log.i("a", "b");
     }
 }

@@ -24,8 +24,9 @@ public class GameController {
 
     private void run() {
         while (running){
+            update();
             if (System.currentTimeMillis() - updateTime > speed){
-                update();
+                playField.update();
                 updateTime = System.currentTimeMillis();
             }else {
                 try {
@@ -38,7 +39,6 @@ public class GameController {
     }
 
     public void update(){
-        playField.update();
         gameView.updateView(playField.getActiveBlock(), playField.getInactiveCells());
     }
 

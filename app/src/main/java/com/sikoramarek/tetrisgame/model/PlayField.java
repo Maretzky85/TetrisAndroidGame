@@ -1,8 +1,5 @@
 package com.sikoramarek.tetrisgame.model;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -11,37 +8,19 @@ import java.util.Vector;
 public class PlayField {
     Random randomGenerator;
 
-    private Bitmap activeCellImage;
-    private Bitmap inactiveCellImage;
-
-    private int screenWidth;
-    private int screenHeight;
-
     private Block activeBlock;
-
     private Vector<Cell> inactiveCells;
 
-    private int cellWidth;
-    private int cellHeight;
-    private boolean updating;
 
-    public PlayField(Bitmap active, Bitmap inactive, int width, int height){
+    public PlayField(){
         inactiveCells = new Vector<>(20);
 
-        screenHeight = height-100;
-        screenWidth = width;
-
-        cellWidth = screenWidth/10;
-        cellHeight = screenHeight/20;
-
-        activeCellImage = Bitmap.createScaledBitmap(active, cellWidth, cellHeight, false);
-        inactiveCellImage = Bitmap.createScaledBitmap(inactive, cellWidth, cellHeight, false);
-
-//        activeBlock = new LBlock(5,10);
         randomGenerator = new Random();
         activeBlock = getRandomBlock();
 
     }
+
+
 
     private Block getRandomBlock() {
         int random = randomGenerator.nextInt(7000);
@@ -107,7 +86,6 @@ public class PlayField {
                 deleteLine(i);
             }
         }
-        updating = false;
     }
 
     private void deleteLine(int y) {
@@ -135,20 +113,6 @@ public class PlayField {
             inactiveCells.add(new Cell(position[0], position[1]));
         }
         checkLines();
-    }
-
-    public void draw(Canvas canvas){
-        ArrayList<int[]> positions = activeBlock.getPositions();
-        synchronized(this){
-            for (int[] position : positions
-            ) {
-                canvas.drawBitmap(activeCellImage, position[0]*cellWidth, position[1]*cellHeight, null);
-            }
-            for (Cell cell : inactiveCells
-            ) {
-                canvas.drawBitmap(inactiveCellImage, cell.xPos*cellWidth, cell.yPos*cellHeight, null);
-            }
-        }
     }
 
     public void left() {
@@ -196,4 +160,11 @@ public class PlayField {
         activeBlock.transform();
     }
 
+    public Block getActiveBlock() {
+        return activeBlock;
+    }
+
+    public Vector<Cell> getInactiveCells() {
+        return inactiveCells;
+    }
 }

@@ -24,7 +24,7 @@ public class MainThread extends Thread {
         while (running){
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder){
-                    this.gameView.update();
+//                    this.gameView.update();
                     this.gameView.draw(canvas);
             }
             surfaceHolder.unlockCanvasAndPost(canvas);

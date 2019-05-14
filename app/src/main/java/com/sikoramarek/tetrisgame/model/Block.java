@@ -14,5 +14,7 @@ public interface Block {
 
     public void moveRight();
 
+    public ArrayList<int[]> nextTransformPositions();
+
 
 }

@@ -2,53 +2,27 @@ package com.sikoramarek.tetrisgame.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Vector;
 
 public class PlayField {
-    Random randomGenerator;
 
     private Block activeBlock;
-    private Vector<Cell> inactiveCells;
+    private final Vector<Cell> inactiveCells;
+    private int score = 0;
+    private boolean running = true;
 
 
     public PlayField(){
         inactiveCells = new Vector<>(20);
-
-        randomGenerator = new Random();
-        activeBlock = getRandomBlock();
-
+        activeBlock = BlockB.getRandomBlock(5,1);
     }
 
-
-
-    private Block getRandomBlock() {
-        int random = randomGenerator.nextInt(7000);
-        if (random < 1000){
-            return new OBlock(5,1);
-        }
-        if (random < 2000){
-            return new TBlock(5,1);
-        }
-        if (random < 3000){
-            return new IBlock(5,2);
-        }
-        if (random < 4000){
-            return new LBlock(5,2);
-        }
-        if (random < 5000){
-            return new SBlock(5,2);
-        }
-        if (random < 6000){
-            return new ZBlock(5,2);
-        }
-        else {
-            return new JBlock(5,2);
-        }
-
+    public boolean isNotRunning(){
+        return !running;
     }
 
     public synchronized void update(){
+        if (running){
             ArrayList<int[]> positions = activeBlock.getPositions();
             for (int[] position: positions
             ){
@@ -67,10 +41,13 @@ public class PlayField {
                 }
             }
             activeBlock.update();
+        }
     }
 
     private void checkLines() {
         int[] lines = new int[21];
+        int totalLines = 0;
+        int scoreToAdd = 0;
         for (int i = 0; i < lines.length; i++) {
             lines[i] = 0;
         }
@@ -84,6 +61,19 @@ public class PlayField {
         for (int i = 0; i < lines.length; i++) {
             if (lines[i] >= 10){
                 deleteLine(i);
+                totalLines++;
+                scoreToAdd += 100;
+            }
+        }
+        if (totalLines > 0){
+            this.score += scoreToAdd * totalLines;
+        }
+
+        for (Cell cell : inactiveCells
+        ) {
+            if (cell.yPos == 0){
+                running = false;
+                return;
             }
         }
     }
@@ -106,7 +96,7 @@ public class PlayField {
     }
 
     private void placeActiveBlock(Block block) {
-        activeBlock = getRandomBlock();
+        activeBlock = BlockB.getRandomBlock(5,1);
         ArrayList<int[]> positions = block.getPositions();
         for (int[] position: positions
         ){
@@ -157,7 +147,28 @@ public class PlayField {
     }
 
     public void click() {
-        activeBlock.transform();
+        if (checkValidTransform()){
+            activeBlock.transform();
+        }
+    }
+
+    private boolean checkValidTransform() {
+        ArrayList<int[]> nextPositions = activeBlock.nextTransformPositions();
+        for (int[] position : nextPositions
+        ) {
+            if (position[0] < 0 || position[0] > 9){
+                return false;
+            }
+
+            for (Cell cell : inactiveCells
+            ) {
+                if (cell.yPos == position[1] && cell.xPos == position[0]){
+                    return false;
+                }
+            }
+
+        }
+        return true;
     }
 
     public Block getActiveBlock() {
@@ -166,5 +177,9 @@ public class PlayField {
 
     public Vector<Cell> getInactiveCells() {
         return inactiveCells;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

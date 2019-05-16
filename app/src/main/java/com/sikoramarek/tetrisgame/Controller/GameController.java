@@ -1,9 +1,11 @@
 package com.sikoramarek.tetrisgame.Controller;
 
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.sikoramarek.tetrisgame.Common.SharedResources;
 import com.sikoramarek.tetrisgame.model.PlayField;
 import com.sikoramarek.tetrisgame.view.GameView;
 
@@ -16,7 +18,7 @@ public class GameController extends Thread{
     private int speed = 800;
 
     private boolean running;
-    private SurfaceHolder surfaceHolder;
+    private final SurfaceHolder surfaceHolder;
 
     public GameController(GameView gameView){
 
@@ -35,41 +37,47 @@ public class GameController extends Thread{
     @Override
     public void run() {
         while (running){
-            Canvas canvas = null;
-            try {
-                canvas = this.surfaceHolder.lockCanvas();
-                synchronized (surfaceHolder){
-                    int score = playField.getScore();
-                    if (score > 2000){
-                        speed = 400;
-                    }
-                    if (score > 10000){
-                        speed = 250;
-                    }
-                    this.gameView.setScore(score);
-                    if (playField.isNotRunning()){
-                        gameView.endGame();
-                    }
-                    this.gameView.updateView(playField.getActiveBlock(), playField.getInactiveCells(), canvas);
-                }
-            }catch (Exception e){
-                //TODO
-//                e.printStackTrace();
+            int score = playField.getScore();
+            if (score > 2000){
+                speed = 400;
             }
-            finally {
-                try {
-                    surfaceHolder.unlockCanvasAndPost(canvas);
-                }catch (Exception e){
-                    e.printStackTrace();
+            if (score > 10000){
+                speed = 250;
+            }
+            this.gameView.setScore(score);
+            if (!playField.isRunning()){
+                gameView.endGame();
+                if (SharedResources.getSharedPreferences().getInt("HighestScore", 0) < score){
+                    SharedPreferences.Editor editor = SharedResources.getSharedPreferences().edit();
+                    editor.putInt("HighestScore", score);
+                    editor.apply();
                 }
-
+//                this.running = false;
+            }
+            Canvas canvas = null;
+            int retry = 0;
+            while (canvas == null) {
+                try {
+                    synchronized (surfaceHolder) {
+                        retry++;
+                        canvas = this.surfaceHolder.lockCanvas();
+                        if (canvas != null) {
+                            this.gameView.updateView(
+                                    playField.getActiveBlock(),
+                                    playField.getInactiveCells(), canvas);
+                            surfaceHolder.unlockCanvasAndPost(canvas);
+                        }
+                    }
+                } catch (IllegalStateException e) {
+                    if (retry > 10){
+                        running = false;
+                        break;
+                    }
+                }
             }
             if (System.currentTimeMillis() - updateTime > speed){
                 this.playField.update();
                 updateTime = System.currentTimeMillis();
-            }
-            if (playField.isNotRunning()){
-                this.running = false;
             }
         }
     }
@@ -100,9 +108,5 @@ public class GameController extends Thread{
         } catch (InterruptedException e) {
             Log.d("GameController", e.getMessage());
         }
-    }
-
-    public int getScore() {
-        return playField.getScore();
     }
 }

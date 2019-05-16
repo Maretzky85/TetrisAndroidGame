@@ -1,6 +1,8 @@
 package com.sikoramarek.tetrisgame.model;
 
-import java.util.ArrayList;
+import android.graphics.Point;
+
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -17,27 +19,25 @@ public class PlayField {
         activeBlock = BlockB.getRandomBlock(5,1);
     }
 
-    public boolean isNotRunning(){
-        return !running;
+    public boolean isRunning(){
+        return running;
     }
 
     public synchronized void update(){
         if (running){
-            ArrayList<int[]> positions = activeBlock.getPositions();
-            for (int[] position: positions
-            ){
-                synchronized (inactiveCells){
-                    for (Cell cell : inactiveCells
-                    ) {
-                        if (cell.yPos == position[1]+1 && cell.xPos == position[0]){
-                            placeActiveBlock(activeBlock);
-                            return;
-                        }
-                    }
-                }
-                if (position[1] == 19){
+            Cell[] positions = activeBlock.getCells();
+            for (Cell position : positions) {
+                if (position.getPoint().y == 19) {
                     placeActiveBlock(activeBlock);
                     return;
+                }
+                for (Cell inactiveCell : inactiveCells
+                ) {
+                    if (inactiveCell.getPoint().y == position.getPoint().y + 1 &&
+                            inactiveCell.getPoint().x == position.getPoint().x) {
+                        placeActiveBlock(activeBlock);
+                        return;
+                    }
                 }
             }
             activeBlock.update();
@@ -53,8 +53,8 @@ public class PlayField {
         }
         for (Cell cell : inactiveCells
                 ) {
-            if (cell.yPos > 0){
-                lines[cell.yPos]++;
+            if (cell.getPoint().y > 0){
+                lines[cell.getPoint().y]++;
             }
         }
 
@@ -71,7 +71,7 @@ public class PlayField {
 
         for (Cell cell : inactiveCells
         ) {
-            if (cell.yPos == 0){
+            if (cell.getPoint().y == 0){
                 running = false;
                 return;
             }
@@ -82,41 +82,39 @@ public class PlayField {
         Iterator<Cell> inactiveIterator = inactiveCells.iterator();
         while (inactiveIterator.hasNext()){
             Cell cell = inactiveIterator.next();
-            if (cell.yPos == y){
+            if (cell.getPoint().y == y){
                 inactiveIterator.remove();
             }
         }
 
         for (Cell cell : inactiveCells
                 ) {
-            if (cell.yPos < y){
-                cell.yPos += 1;
+            if (cell.getPoint().y < y){
+                cell.getPoint().offset(0,1);
             }
         }
     }
 
     private void placeActiveBlock(Block block) {
         activeBlock = BlockB.getRandomBlock(5,1);
-        ArrayList<int[]> positions = block.getPositions();
-        for (int[] position: positions
-        ){
-            inactiveCells.add(new Cell(position[0], position[1]));
-        }
+        Cell[] positions = block.getCells();
+        inactiveCells.addAll(Arrays.asList(positions));
         checkLines();
     }
 
     public void left() {
         if (activeBlock!=null){
-            ArrayList<int[]> positions = activeBlock.getPositions();
-            for (int[] position : positions
+            Cell[] positions = activeBlock.getCells();
+            for (Cell cell : positions
             ) {
-                if (position[0] == 0){
+                if (cell.getPoint().x == 0){
                     return;
                 }
 
-                for (Cell cell : inactiveCells
+                for (Cell inactiveCell : inactiveCells
                 ) {
-                    if (cell.yPos == position[1] && cell.xPos == position[0]-1){
+                    if (inactiveCell.getPoint().y == cell.getPoint().y &&
+                            inactiveCell.getPoint().x == cell.getPoint().x - 1){
                         return;
                     }
                 }
@@ -128,16 +126,17 @@ public class PlayField {
 
     public void right() {
         if (activeBlock!=null){
-            ArrayList<int[]> positions = activeBlock.getPositions();
-            for (int[] position : positions
+            Cell[] positions = activeBlock.getCells();
+            for (Cell cell : positions
             ) {
-                if (position[0] == 9) {
+                if (cell.getPoint().x == 9) {
                     return;
                 }
 
-                for (Cell cell : inactiveCells
+                for (Cell inactiveCell : inactiveCells
                 ) {
-                    if (cell.yPos == position[1] && cell.xPos == position[0]+1){
+                    if (inactiveCell.getPoint().y == cell.getPoint().y &&
+                            inactiveCell.getPoint().x == cell.getPoint().x + 1){
                         return;
                     }
                 }
@@ -153,20 +152,19 @@ public class PlayField {
     }
 
     private boolean checkValidTransform() {
-        ArrayList<int[]> nextPositions = activeBlock.nextTransformPositions();
-        for (int[] position : nextPositions
+        Point[] nextPositions = activeBlock.nextTransformPositions();
+        for (Point point: nextPositions
         ) {
-            if (position[0] < 0 || position[0] > 9){
+            if (point.x < 0 || point.x > 9 || point.y > 19){
                 return false;
             }
 
-            for (Cell cell : inactiveCells
+            for (Cell inactiveCell : inactiveCells
             ) {
-                if (cell.yPos == position[1] && cell.xPos == position[0]){
+                if (inactiveCell.getPoint().y == point.y && inactiveCell.getPoint().x == point.x){
                     return false;
                 }
             }
-
         }
         return true;
     }

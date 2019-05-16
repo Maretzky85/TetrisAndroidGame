@@ -1,16 +1,18 @@
 package com.sikoramarek.tetrisgame.model;
 
-import java.util.ArrayList;
+import android.graphics.Color;
+import android.graphics.Point;
+
+import com.sikoramarek.tetrisgame.view.BlockColors;
+
 import java.util.Random;
 
 public class BlockB implements Block{
 
     private static Random randomGenerator = new Random();
     private int x, y;
-    private  ArrayList<int[]> positions;
-    private ArrayList<int[]> xTransforms;
-    private ArrayList<int[]> yTransforms;
-    private int currentTransform = 0;
+    private Type type;
+    private  Cell[] cells;
 
     private BlockB(){
     }
@@ -25,31 +27,26 @@ public class BlockB implements Block{
         return this;
     }
 
-    private BlockB setPositions(ArrayList<int[]> positions) {
-        this.positions = positions;
+    private BlockB setCells(Cell[] cells) {
+        this.cells = cells;
         return this;
     }
 
-    private BlockB setXTransforms(ArrayList<int[]> xTransforms) {
-        this.xTransforms = xTransforms;
-        return this;
-    }
-
-    private BlockB setYTransforms(ArrayList<int[]> yTransforms) {
-        this.yTransforms = yTransforms;
+    private BlockB setType(Type type){
+        this.type = type;
         return this;
     }
 
     static Block getRandomBlock(int x, int y){
         int random = randomGenerator.nextInt(7000);
         if (random < 1000){
-            return getBlock(x, y, Type.I);
+            return getBlock(x, y+2, Type.I);
         }
         if (random < 2000){
-            return getBlock(x, y, Type.J);
+            return getBlock(x, y+1, Type.J);
         }
         if (random < 3000){
-            return getBlock(x, y, Type.L);
+            return getBlock(x, y+1, Type.L);
         }
         if (random < 4000){
             return getBlock(x, y, Type.O);
@@ -67,80 +64,73 @@ public class BlockB implements Block{
 
     private static Block getBlock(int x, int y, Type type){
         BlockB block = new BlockB();
-        ArrayList<int[]> xTransforms = new ArrayList<>(1);
-        ArrayList<int[]> yTransforms = new ArrayList<>(1);
-        ArrayList<int[]> positions = new ArrayList<>(4);
-        for (int i = 0; i < 4; i++) {
-            positions.add(i, null);
-        }
+        Cell[] cells = new Cell[4];
+
         switch (type) {
             case I:
-                xTransforms.add(new int[]{0,0,0,0});
-                xTransforms.add(new int[]{-2,-1,0,1});
-
-                yTransforms.add(new int[]{-2,-1,0,1});
-                yTransforms.add(new int[]{0,0,0,0});
+                cells = new Cell[]{
+                        new Cell(x,y-2, BlockColors.RED),
+                        new Cell(x,y-1, BlockColors.RED),
+                        new Cell(x,y, BlockColors.RED),
+                        new Cell(x,y+1, BlockColors.RED)
+                };
                 break;
             case J:
-                xTransforms.add(new int[]{-1,-1,0,1});
-                xTransforms.add(new int[]{-1,0,0,0});
-                xTransforms.add(new int[]{-1,0,1,1});
-                xTransforms.add(new int[]{0,-1,-1,-1});
-
-                yTransforms.add(new int[]{-1,0,0,0});
-                yTransforms.add(new int[]{0,0,-1,-2});
-                yTransforms.add(new int[]{-1,-1,-1,0});
-                yTransforms.add(new int[]{-2,-2,-1,0});
+                cells = new Cell[]{
+                        new Cell(x-1,y-1, BlockColors.YELLOW),
+                        new Cell(x-1,y, BlockColors.YELLOW),
+                        new Cell(x,y, BlockColors.YELLOW),
+                        new Cell(x+1,y, BlockColors.YELLOW)
+                };
                 break;
             case L:
-                xTransforms.add(new int[]{-1,0,1,1});
-                xTransforms.add(new int[]{0,-1,-1,-1});
-                xTransforms.add(new int[]{-1,-1,0,1});
-                xTransforms.add(new int[]{0,1,1,1});
-
-                yTransforms.add(new int[]{0,0,0,-1});
-                yTransforms.add(new int[]{0,0,-1,-2});
-                yTransforms.add(new int[]{0,-1,-1,-1});
-                yTransforms.add(new int[]{-2,-2,-1,0});
+                cells = new Cell[]{
+                        new Cell(x-1,y, BlockColors.GREEN),
+                        new Cell(x,y, BlockColors.GREEN),
+                        new Cell(x+1,y, BlockColors.GREEN),
+                        new Cell(x+1,y-1, BlockColors.GREEN)
+                };
                 break;
             case O:
-                xTransforms.add(new int[]{-1,-1,0,0});
-
-                yTransforms.add(new int[]{0,-1,0,-1});
+                cells = new Cell[]{
+                        new Cell(x-1,y, BlockColors.BLUE),
+                        new Cell(x-1,y-1, BlockColors.BLUE),
+                        new Cell(x,y, BlockColors.BLUE),
+                        new Cell(x,y-1, BlockColors.BLUE)
+                };
                 break;
             case S:
-                xTransforms.add(new int[]{-1,0,0,1});
-                xTransforms.add(new int[]{0,0,-1,-1});
-
-                yTransforms.add(new int[]{-1,-1,0,0});
-                yTransforms.add(new int[]{-1,0,0,1});
+                cells = new Cell[]{
+                        new Cell(x-1,y-1, BlockColors.ORANGE),
+                        new Cell(x,y-1, BlockColors.ORANGE),
+                        new Cell(x,y, BlockColors.ORANGE),
+                        new Cell(x+1,y, BlockColors.ORANGE)
+                };
                 break;
             case T:
-                xTransforms.add(new int[]{-1,0,0,1});
-                xTransforms.add(new int[]{0,0,0,1});
-                xTransforms.add(new int[]{-1,0,0,1});
-                xTransforms.add(new int[]{0,0,0,-1});
-
-                yTransforms.add(new int[]{0,-1,0,0});
-                yTransforms.add(new int[]{-1,0,1,0});
-                yTransforms.add(new int[]{0,1,0,0});
-                yTransforms.add(new int[]{-1,0,1,0});
+                cells = new Cell[]{
+                        new Cell(x-1,y, BlockColors.VIOLET),
+                        new Cell(x,y-1, BlockColors.VIOLET),
+                        new Cell(x,y, BlockColors.VIOLET),
+                        new Cell(x+1,y, BlockColors.VIOLET)
+                };
                 break;
-            case Z:
-                xTransforms.add(new int[]{-1,0,0,1});
-                xTransforms.add(new int[]{0,0,-1,-1});
 
-                yTransforms.add(new int[]{0,0,-1,-1});
-                yTransforms.add(new int[]{1,0,0,-1});
+            case Z:
+                cells = new Cell[]{
+                        new Cell(x-1,y, BlockColors.ORANGE),
+                        new Cell(x,y, BlockColors.ORANGE),
+                        new Cell(x,y-1, BlockColors.ORANGE),
+                        new Cell(x+1,y-1, BlockColors.ORANGE)
+                };
                 break;
         }
 
         return block
                 .setY(y)
                 .setX(x)
-                .setXTransforms(xTransforms)
-                .setYTransforms(yTransforms)
-                .setPositions(positions)
+                .setType(type)
+                .setCells(cells)
                 .finish();
     }
 
@@ -149,50 +139,69 @@ public class BlockB implements Block{
     }
 
     @Override
-    public ArrayList<int[]> getPositions() {
-        int[] xTransform = xTransforms.get(currentTransform);
-        int[] yTransform = yTransforms.get(currentTransform);
-        for (int i = 0; i < xTransform.length; i++) {
-            int[] position = new int[]{x + xTransform[i], y + yTransform[i]};
-            positions.set(i, position);
-        }
-        return positions;
+    public Cell[] getCells() {
+        return cells;
     }
 
     @Override
     public void update() {
+        for (Cell cell : cells
+                ) {
+            cell.getPoint().set(cell.getPoint().x, cell.getPoint().y+1);
+        }
         y += 1;
     }
 
     @Override
     public void transform() {
-        if (currentTransform < xTransforms.size()-1){
-            currentTransform++;
-        }else {
-            currentTransform = 0;
+        if (type != Type.O){
+            for (Cell cell : cells
+            ) {
+                int xPos = cell.getPoint().x - this.x;
+                int yPos = cell.getPoint().y - this.y;
+                int newXPos = -yPos + this.x;
+                int newYPos = xPos + this.y;
+                cell.getPoint().set(newXPos, newYPos);
+            }
         }
     }
 
     @Override
     public void moveLeft() {
+        for (Cell cell : cells
+        ) {
+            cell.getPoint().set(cell.getPoint().x-1, cell.getPoint().y);
+        }
         x -= 1;
     }
 
     @Override
     public void moveRight() {
+        for (Cell cell : cells
+        ) {
+            cell.getPoint().set(cell.getPoint().x+1, cell.getPoint().y);
+        }
         x += 1;
     }
 
     @Override
-    public ArrayList<int[]> nextTransformPositions() {
-        int tempTransform = currentTransform;
-        transform();
-        ArrayList<int[]> nextPositions =  getPositions();
-        currentTransform = tempTransform;
+    public Point[] nextTransformPositions() {
+        Point[] nextPositions = new Point[cells.length];
+        for (int i = 0; i < cells.length; i++) {
+            int xPos = cells[i].getPoint().x - this.x;
+            int yPos = cells[i].getPoint().y - this.y;
+            int newXPos = -yPos + this.x;
+            int newYPos = xPos + this.y;
+            nextPositions[i] = new Point(newXPos, newYPos);
+        }
         return nextPositions;
     }
 
     private enum Type{
-        T, I, J, L, O, S, Z
+        T(0), I(1), J(2), L(3), O(4), S(5), Z(6);
+        private int value;
+        Type(int value){
+            this.value = value;
+        }
     }
 }

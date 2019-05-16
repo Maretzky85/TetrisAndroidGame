@@ -8,14 +8,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.sikoramarek.tetrisgame.Controller.InputHandler;
 import com.sikoramarek.tetrisgame.Controller.Inputs;
@@ -23,13 +19,9 @@ import com.sikoramarek.tetrisgame.R;
 import com.sikoramarek.tetrisgame.model.Block;
 import com.sikoramarek.tetrisgame.model.Cell;
 
-import java.util.ArrayList;
 import java.util.Vector;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-
-    Bitmap activeBlock = BitmapFactory.decodeResource(getResources(), R.drawable.redblock);
-    Bitmap inactiveBlock = BitmapFactory.decodeResource(getResources(), R.drawable.inactive);
 
     int WIDTH = Resources.getSystem().getDisplayMetrics().widthPixels;
     int HEIGHT = Resources.getSystem().getDisplayMetrics().heightPixels;
@@ -39,28 +31,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     int score = 0;
 
+    private ViewResources viewResources;
+
     private int screenHeight = HEIGHT;
     private int screenWidth = WIDTH;
 
     private int cellWidth = screenWidth/10;
     private int cellHeight = screenHeight/20;
 
-    private Bitmap activeCellImage = Bitmap.createScaledBitmap(activeBlock, cellWidth, cellHeight, false);
-    private Bitmap inactiveCellImage = Bitmap.createScaledBitmap(inactiveBlock, cellWidth, cellHeight, false);
     private int SENSITIVITY = 80;
 
     private long touchTime;
     private int touchXPos;
     private int touchYPos;
+
     private Block activeBlocks;
-    private Vector<Cell> inactiveBlocks;
+    private Vector<Cell> inactiveCells;
 
     private int currentAction = -1;
     private boolean takingBlockDown = false;
     private boolean endGame = false;
 
 
-    @SuppressLint("ClickableViewAccessibility")
     public GameView(Context context){
 
         super(context);
@@ -73,12 +65,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         fontPaint.setTextSize(50);
         endFontPaint.setTextSize(250);
 
+        viewResources = new ViewResources(getResources());
+        viewResources.resizeImages(WIDTH, HEIGHT);
+
+
+
+        setTouchListener();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setTouchListener() {
         this.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int sensitivity = SENSITIVITY;
+                int alteredSensitivity = SENSITIVITY;
                 if (takingBlockDown){
-                    sensitivity = sensitivity*2;
+                    alteredSensitivity = alteredSensitivity*2;
                 }
                 int x = (int) event.getX();
                 int y = (int) event.getY();
@@ -92,17 +94,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (currentAction == MotionEvent.ACTION_DOWN ||
-                        currentAction == MotionEvent.ACTION_MOVE){
+                                currentAction == MotionEvent.ACTION_MOVE){
                             int deltaX = touchXPos - x;
                             int deltaY = touchYPos - y;
 
-                            if (deltaX > sensitivity){
+                            if (deltaX > alteredSensitivity){
                                 touchXPos = x;
                                 InputHandler.move(Inputs.LEFT);
                                 currentAction = MotionEvent.ACTION_MOVE;
                                 break;
                             }else
-                            if (deltaX < -sensitivity){
+                            if (deltaX < -alteredSensitivity){
                                 touchXPos = x;
                                 InputHandler.move(Inputs.RIGHT);
                                 break;
@@ -127,6 +129,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 return true;
             }
         });
+
     }
 
     public void endGame(){
@@ -136,37 +139,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d("GameView", "=============================================================Created");
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d("GameView", "=============================================================Changed\n"+
-                "format: "+format+
-                "\nwidth: "+width+
-                "\nheight: "+height);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d("GameView", "=============================================================Destroyed");
     }
 
     @Override
     public void draw(Canvas canvas){
-        super.draw(canvas);
         if (canvas != null){
+            super.draw(canvas);
             if (activeBlocks != null){
-                ArrayList<int[]> positions = activeBlocks.getPositions();
-                for (int[] position : positions
+                Cell[] positions = activeBlocks.getCells();
+                for (Cell cell: positions
                 ) {
-                    canvas.drawBitmap(activeCellImage, position[0]*cellWidth, position[1]*cellHeight, null);
+                    canvas.drawBitmap(viewResources.getActiveBlock(cell.getColor()),
+                            cell.getPoint().x*cellWidth,
+                            cell.getPoint().y*cellHeight,
+                            null);
                 }
             }
-            if (inactiveBlocks != null){
-                for (Cell cell : inactiveBlocks
-                ) {
-                    canvas.drawBitmap(inactiveCellImage, cell.xPos*cellWidth, cell.yPos*cellHeight, null);
+            if (inactiveCells != null){
+                for (int i = 0; i < inactiveCells.size(); i++) {
+                    canvas.drawBitmap(viewResources.getInactiveBlock(inactiveCells.get(i).getColor()),
+                            inactiveCells.get(i).getPoint().x*cellWidth,
+                            inactiveCells.get(i).getPoint().y*cellHeight,
+                            null);
                 }
             }
             canvas.drawText("Score: "+ score, 50,50, fontPaint);
@@ -177,9 +179,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    public void updateView(Block activeBlock, Vector<Cell> inactiveBlock, Canvas canvas){
+    public void updateView(Block activeBlock, Vector<Cell> inactiveCells, Canvas canvas){
         this.activeBlocks = activeBlock;
-        this.inactiveBlocks = inactiveBlock;
+        this.inactiveCells = inactiveCells;
         draw(canvas);
     }
 

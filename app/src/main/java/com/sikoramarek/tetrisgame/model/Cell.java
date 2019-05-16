@@ -1,13 +1,27 @@
 package com.sikoramarek.tetrisgame.model;
 
+import android.graphics.Point;
+
+import com.sikoramarek.tetrisgame.view.BlockColors;
+
 public class Cell {
 
-    public Cell(int x, int y){
-        xPos = x;
-        yPos = y;
+    private Point point;
+    private BlockColors color;
+
+    public Cell(int x, int y, BlockColors color){
+        point = new Point();
+        point.set(x,y);
+        this.color = color;
+
     }
 
-    public int xPos;
-    public int yPos;
+    public BlockColors getColor() {
+        return color;
+    }
+
+    public Point getPoint(){
+        return point;
+    }
 
 }

@@ -1,10 +1,10 @@
 package com.sikoramarek.tetrisgame.model;
 
-import java.util.ArrayList;
+import android.graphics.Point;
 
 public interface Block {
 
-    public ArrayList<int[]> getPositions();
+    public Cell[] getCells();
 
     public void update();
 
@@ -14,7 +14,7 @@ public interface Block {
 
     public void moveRight();
 
-    public ArrayList<int[]> nextTransformPositions();
+    public Point[] nextTransformPositions();
 
 
 }

@@ -2,12 +2,14 @@ package com.sikoramarek.tetrisgame.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -20,6 +22,8 @@ import com.sikoramarek.tetrisgame.model.Block;
 import com.sikoramarek.tetrisgame.model.Cell;
 
 import java.util.Vector;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -52,6 +56,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private boolean takingBlockDown = false;
     private boolean endGame = false;
 
+    private SharedPreferences sharedPreferences = getContext()
+            .getSharedPreferences("Score", MODE_PRIVATE);
 
     public GameView(Context context){
 
@@ -67,8 +73,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         viewResources = new ViewResources(getResources());
         viewResources.resizeImages(WIDTH, HEIGHT);
-
-
 
         setTouchListener();
     }
@@ -133,6 +137,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void endGame(){
+        if (sharedPreferences.getInt("HighestScore", 0) < score){
+            sharedPreferences.edit().putInt("HighestScore", score).apply();
+        }
         endGame = true;
     }
 

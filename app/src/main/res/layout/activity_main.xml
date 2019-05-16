@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -14,7 +15,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginRight="30dp"
         android:background="@color/colorPrimary"
-        android:text="Start"
+        android:text="@string/start"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         tools:layout_editor_absoluteX="70dp"

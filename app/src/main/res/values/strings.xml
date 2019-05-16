@@ -3,4 +3,5 @@
     <string name="highestScore">Highest score:</string>
     <string name="NoHigherScore">No Higher Score yet...</string>
     <string name="hscore">Highest Score:</string>
+    <string name="start">Start</string>
 </resources>

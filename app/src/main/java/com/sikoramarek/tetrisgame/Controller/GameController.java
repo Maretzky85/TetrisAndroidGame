@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.sikoramarek.tetrisgame.Common.SharedResources;
 import com.sikoramarek.tetrisgame.model.PlayField;
 import com.sikoramarek.tetrisgame.view.GameView;
 
@@ -47,12 +46,7 @@ public class GameController extends Thread{
             this.gameView.setScore(score);
             if (!playField.isRunning()){
                 gameView.endGame();
-                if (SharedResources.getSharedPreferences().getInt("HighestScore", 0) < score){
-                    SharedPreferences.Editor editor = SharedResources.getSharedPreferences().edit();
-                    editor.putInt("HighestScore", score);
-                    editor.apply();
-                }
-//                this.running = false;
+                this.running = false;
             }
             Canvas canvas = null;
             int retry = 0;

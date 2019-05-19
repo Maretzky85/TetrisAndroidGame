@@ -20,6 +20,10 @@ public class Cell {
         return color;
     }
 
+    public void setColor(BlockColors color) {
+        this.color = color;
+    }
+
     public Point getPoint(){
         return point;
     }

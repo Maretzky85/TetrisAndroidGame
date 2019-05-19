@@ -1,6 +1,7 @@
 package com.sikoramarek.tetrisgame.model;
 
 import android.graphics.Point;
+import android.os.Bundle;
 
 public interface Block {
 
@@ -16,5 +17,7 @@ public interface Block {
 
     public Point[] nextTransformPositions();
 
+    public void saveState(Bundle outState);
 
+    public Block loadStateFrom(Bundle savedStateBundle);
 }

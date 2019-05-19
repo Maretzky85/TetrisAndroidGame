@@ -1,7 +1,7 @@
 package com.sikoramarek.tetrisgame.model;
 
-import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Bundle;
 
 import com.sikoramarek.tetrisgame.view.BlockColors;
 
@@ -195,6 +195,50 @@ public class BlockB implements Block{
             nextPositions[i] = new Point(newXPos, newYPos);
         }
         return nextPositions;
+    }
+
+    @Override
+    public void saveState(Bundle outState) {
+
+        int[] activeXList = new int[4];
+        int[] activeYList = new int[4];
+        int[] activeColors = new int[4];
+
+        for (int i = 0; i < cells.length; i++) {
+            Cell currentCell = cells[i];
+            activeXList[i] = currentCell.getPoint().x;
+            activeYList[i] = currentCell.getPoint().y;
+            activeColors[i] = currentCell.getColor().getValue();
+        }
+
+        outState.putIntArray("activeXList", activeXList);
+        outState.putIntArray("activeYList", activeYList);
+        outState.putIntArray("activeColors", activeColors);
+        outState.putInt("XPosition", x);
+        outState.putInt("YPosition", y);
+    }
+
+    public Block loadStateFrom(Bundle savedStateBundle){
+        int[] activeXList = savedStateBundle.getIntArray("activeXList");
+        int[] activeYList = savedStateBundle.getIntArray("activeYList");
+        int[] activeColors = savedStateBundle.getIntArray("activeColors");
+
+        BlockB block = new BlockB();
+        Cell[] cells = new Cell[4];
+
+        for (int i = 0; i < activeXList.length; i++) {
+            cells[i] = new Cell(
+                    activeXList[i],
+                    activeYList[i],
+                    BlockColors.values()[activeColors[i]]
+            );
+        }
+
+        return block
+                .setX(savedStateBundle.getInt("XPosition"))
+                .setY(savedStateBundle.getInt("XPosition"))
+                .setCells(cells)
+                .finish();
     }
 
     private enum Type{

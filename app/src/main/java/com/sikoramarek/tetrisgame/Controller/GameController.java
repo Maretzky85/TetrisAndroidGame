@@ -1,12 +1,13 @@
 package com.sikoramarek.tetrisgame.Controller;
 
-import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.SurfaceHolder;
 
 import com.sikoramarek.tetrisgame.model.PlayField;
 import com.sikoramarek.tetrisgame.view.GameView;
+
+import static com.sikoramarek.tetrisgame.Controller.InputHandler.pauseUpdate;
+import static com.sikoramarek.tetrisgame.Controller.InputHandler.speed;
 
 public class GameController extends Thread{
 
@@ -14,7 +15,6 @@ public class GameController extends Thread{
     private final GameView gameView;
 
     private long updateTime;
-    private int speed = 800;
 
     private boolean running;
     private final SurfaceHolder surfaceHolder;
@@ -24,6 +24,7 @@ public class GameController extends Thread{
         this.gameView = gameView;
         this.surfaceHolder = gameView.getHolder();
         this.playField = new PlayField();
+        speed = 800;
 
         InputHandler.attachController(this);
 
@@ -37,42 +38,46 @@ public class GameController extends Thread{
     public void run() {
         while (running){
             int score = playField.getScore();
-            if (score > 2000){
-                speed = 400;
-            }
-            if (score > 10000){
-                speed = 250;
-            }
+            adjustSpeedViaScore(score);
             this.gameView.setScore(score);
             if (!playField.isRunning()){
                 gameView.endGame();
                 this.running = false;
             }
-            Canvas canvas = null;
-            int retry = 0;
-            while (canvas == null) {
-                try {
-                    synchronized (surfaceHolder) {
-                        retry++;
-                        canvas = this.surfaceHolder.lockCanvas();
-                        if (canvas != null) {
-                            this.gameView.updateView(
-                                    playField.getActiveBlock(),
-                                    playField.getInactiveCells(), canvas);
-                            surfaceHolder.unlockCanvasAndPost(canvas);
-                        }
-                    }
-                } catch (IllegalStateException e) {
-                    if (retry > 10){
-                        running = false;
-                        break;
+            synchronized (surfaceHolder){
+                if (System.currentTimeMillis() - updateTime > speed){
+                    if (pauseUpdate){
+                        pauseUpdate = false;
+                        System.out.println("pause update");
+                    }else {
+                        this.playField.update();
+                        updateTime = System.currentTimeMillis();
                     }
                 }
+                boolean drawed = false;
+                while(!drawed){
+                    drawed = this.gameView.updateView(
+                            playField.getActiveBlock(),
+                            playField.getInactiveCells());
+                }
             }
-            if (System.currentTimeMillis() - updateTime > speed){
-                this.playField.update();
-                updateTime = System.currentTimeMillis();
-            }
+
+        }
+    }
+
+    private void adjustSpeedViaScore(int score) {
+        if (score > 10000){
+            speed = 200;
+        }else if (score > 8000){
+            speed = 300;
+        }else if (speed > 6000){
+            speed = 400;
+        }else if (score > 4000){
+            speed = 500;
+        }else if (score > 2000){
+            speed = 600;
+        }else if (score > 1000){
+            speed = 700;
         }
     }
 
@@ -94,13 +99,11 @@ public class GameController extends Thread{
         }
     }
 
+    public void saveStateTo(Bundle outState) {
+        playField.saveStateTo(outState);
+    }
 
-    public void stopGame(){
-        running = false;
-        try {
-            this.join();
-        } catch (InterruptedException e) {
-            Log.d("GameController", e.getMessage());
-        }
+    public void loadStateFrom(Bundle savedInstanceState) {
+        playField.loadStateFrom(savedInstanceState);
     }
 }

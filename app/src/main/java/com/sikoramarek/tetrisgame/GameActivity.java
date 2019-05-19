@@ -25,15 +25,21 @@ public class GameActivity extends Activity {
         GameView gameView = new GameView(this);
         setContentView(gameView);
         gameController = new GameController(gameView);
-
+        if (savedInstanceState != null){
+            gameController.loadStateFrom(savedInstanceState);
+        }
         new Thread(gameController).start();
 
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        gameController.saveStateTo(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        gameController.stopGame();
-        GameActivity.this.finish();
     }
 }

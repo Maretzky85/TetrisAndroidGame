@@ -78,15 +78,20 @@ class ViewResources {
         return inactiveImages[RED.getValue()];
     }
 
-    void resizeImages( int width, int height){
-        int cellHeight = height / 20;
-        int cellWidth = width / 10;
+    void resizeImages( float width, float height){
+        float widthToHeightRatio = ((float) width/ (float) height);
+        float cellHeight = height / 20;
+        float cellWidth = width / 10;
+
+        if (widthToHeightRatio > 1){
+            cellWidth =Math.abs((int)(cellWidth*(2-widthToHeightRatio)));
+        }
 
         for (int i = 0; i < activeImages.length; i++) {
-            activeImages[i] = Bitmap.createScaledBitmap(activeImages[i], cellWidth, cellHeight, false);
+            activeImages[i] = Bitmap.createScaledBitmap(activeImages[i], (int) cellWidth, (int) cellHeight, false);
         }
         for (int i = 0; i < inactiveImages.length; i++) {
-            inactiveImages[i] = Bitmap.createScaledBitmap(inactiveImages[i], cellWidth, cellHeight, false);
+            inactiveImages[i] = Bitmap.createScaledBitmap(inactiveImages[i], (int) cellWidth, (int) cellHeight, false);
         }
     }
 }

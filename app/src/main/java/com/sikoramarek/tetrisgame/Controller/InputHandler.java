@@ -1,24 +1,25 @@
 package com.sikoramarek.tetrisgame.Controller;
 
-import com.sikoramarek.tetrisgame.view.GameView;
-
 public class InputHandler {
 
+    public static boolean pauseUpdate = false;
+
     private static GameController gameController;
-    private static GameView gameView;
 
     private InputHandler(){
     }
 
-    public static void attachView(GameView gv){
-        gameView = gv;
-    }
+    public static int currentAction = -1;
 
-    public static void attachController(GameController gc){
+    public static int speed;
+
+    static void attachController(GameController gc){
         gameController = gc;
     }
 
     public static void move(Inputs input) {
-        gameController.move(input);
+        if (gameController != null){
+            gameController.move(input);
+        }
     }
 }

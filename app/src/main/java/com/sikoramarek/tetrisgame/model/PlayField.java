@@ -1,21 +1,28 @@
 package com.sikoramarek.tetrisgame.model;
 
 import android.graphics.Point;
+import android.os.Bundle;
+import android.view.MotionEvent;
 
+import com.sikoramarek.tetrisgame.Controller.InputHandler;
+import com.sikoramarek.tetrisgame.view.BlockColors;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Vector;
+
+import static java.lang.Thread.sleep;
 
 public class PlayField {
 
     private Block activeBlock;
-    private final Vector<Cell> inactiveCells;
+    private final ArrayList<Cell> inactiveCells;
     private int score = 0;
     private boolean running = true;
 
 
     public PlayField(){
-        inactiveCells = new Vector<>(20);
+        inactiveCells = new ArrayList<>(20);
         activeBlock = BlockB.getRandomBlock(5,1);
     }
 
@@ -24,7 +31,7 @@ public class PlayField {
     }
 
     public synchronized void update(){
-        if (running){
+        if (running && !InputHandler.pauseUpdate){
             Cell[] positions = activeBlock.getCells();
             for (Cell position : positions) {
                 if (position.getPoint().y == 19) {
@@ -78,12 +85,20 @@ public class PlayField {
         }
     }
 
-    private void deleteLine(int y) {
+    private synchronized void deleteLine(int y) {
+        InputHandler.pauseUpdate = true;
         Iterator<Cell> inactiveIterator = inactiveCells.iterator();
         while (inactiveIterator.hasNext()){
             Cell cell = inactiveIterator.next();
             if (cell.getPoint().y == y){
                 inactiveIterator.remove();
+                synchronized (this){
+                    try {
+                        Thread.sleep(InputHandler.speed / inactiveCells.size());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
 
@@ -96,10 +111,11 @@ public class PlayField {
     }
 
     private void placeActiveBlock(Block block) {
-        activeBlock = BlockB.getRandomBlock(5,1);
         Cell[] positions = block.getCells();
         inactiveCells.addAll(Arrays.asList(positions));
+        InputHandler.pauseUpdate = true;
         checkLines();
+        activeBlock = BlockB.getRandomBlock(5,1);
     }
 
     public void left() {
@@ -173,11 +189,54 @@ public class PlayField {
         return activeBlock;
     }
 
-    public Vector<Cell> getInactiveCells() {
+    public ArrayList<Cell> getInactiveCells() {
         return inactiveCells;
     }
 
     public int getScore() {
         return score;
+    }
+
+    public void saveStateTo(Bundle outState) {
+        int inactiveSize = inactiveCells.size();
+        int[] inactiveXList = new int[inactiveSize];
+        int[] inactiveYList = new int[inactiveSize];
+        int[] inactiveColors = new int[inactiveSize];
+
+
+        for (int i = 0; i < inactiveCells.size(); i++) {
+            Cell currentCell = inactiveCells.get(i);
+            inactiveXList[i] = currentCell.getPoint().x;
+            inactiveYList[i] = currentCell.getPoint().y;
+            inactiveColors[i] = currentCell.getColor().getValue();
+        }
+
+        activeBlock.saveState(outState);
+
+        outState.putIntArray("inactiveXList", inactiveXList);
+        outState.putIntArray("inactiveYList", inactiveYList);
+        outState.putIntArray("inactiveColors", inactiveColors);
+
+        outState.putInt("score", score);
+    }
+
+    public void loadStateFrom(Bundle savedInstanceState) {
+        int[] inactiveXList = savedInstanceState.getIntArray("inactiveXList");
+        int[] inactiveYList = savedInstanceState.getIntArray("inactiveYList");
+        int[] inactiveColors = savedInstanceState.getIntArray("inactiveColors");
+
+        for (int i = 0; i < inactiveXList.length; i++) {
+            inactiveCells.add(new Cell(
+                    inactiveXList[i],
+                    inactiveYList[i],
+                    BlockColors.values()[inactiveColors[i]]
+            ));
+        }
+
+        this.score = savedInstanceState.getInt("score");
+
+
+        activeBlock = activeBlock.loadStateFrom(savedInstanceState);
+
     }
 }

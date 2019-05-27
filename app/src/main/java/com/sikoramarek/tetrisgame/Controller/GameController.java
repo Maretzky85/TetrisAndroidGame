@@ -6,6 +6,9 @@ import android.view.SurfaceHolder;
 import com.sikoramarek.tetrisgame.model.PlayField;
 import com.sikoramarek.tetrisgame.view.GameView;
 
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
 import static com.sikoramarek.tetrisgame.Controller.InputHandler.pauseUpdate;
 import static com.sikoramarek.tetrisgame.Controller.InputHandler.speed;
 
@@ -13,6 +16,8 @@ public class GameController extends Thread{
 
     private PlayField playField;
     private final GameView gameView;
+
+    private Queue<Inputs> cachedInputs;
 
     private long updateTime;
 
@@ -24,6 +29,7 @@ public class GameController extends Thread{
         this.gameView = gameView;
         this.surfaceHolder = gameView.getHolder();
         this.playField = new PlayField();
+        this.cachedInputs = new ArrayBlockingQueue<>(5);
         speed = 800;
 
         InputHandler.attachController(this);
@@ -44,24 +50,25 @@ public class GameController extends Thread{
                 gameView.endGame();
                 this.running = false;
             }
-            synchronized (surfaceHolder){
-                if (System.currentTimeMillis() - updateTime > speed){
-                    if (pauseUpdate){
-                        pauseUpdate = false;
-                        System.out.println("pause update");
-                    }else {
-                        this.playField.update();
-                        updateTime = System.currentTimeMillis();
-                    }
-                }
-                boolean drawed = false;
-                while(!drawed){
-                    drawed = this.gameView.updateView(
-                            playField.getActiveBlock(),
-                            playField.getInactiveCells());
+            while (!cachedInputs.isEmpty()){
+                moveExecute(cachedInputs.remove());
+            }
+            if (System.currentTimeMillis() - updateTime > speed) {
+                if (pauseUpdate) {
+                    pauseUpdate = false;
+                } else {
+                    this.playField.update();
+                    updateTime = System.currentTimeMillis();
                 }
             }
-
+            synchronized (surfaceHolder) {
+                    boolean drawed = false;
+                    while (!drawed) {
+                        drawed = this.gameView.updateView(
+                                playField.getActiveBlock(),
+                                playField.getInactiveCells());
+                    }
+                }
         }
     }
 
@@ -82,7 +89,7 @@ public class GameController extends Thread{
     }
 
 
-    void move(Inputs input) {
+    void moveExecute(Inputs input) {
         switch (input) {
             case CLICK:
                 playField.click();
@@ -96,6 +103,12 @@ public class GameController extends Thread{
             case DOWN:
                 playField.update();
                 break;
+        }
+    }
+
+    void move(Inputs input){
+        if (!cachedInputs.contains(input)){
+            cachedInputs.add(input);
         }
     }
 

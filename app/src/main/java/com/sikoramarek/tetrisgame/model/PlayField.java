@@ -2,7 +2,6 @@ package com.sikoramarek.tetrisgame.model;
 
 import android.graphics.Point;
 import android.os.Bundle;
-import android.view.MotionEvent;
 
 import com.sikoramarek.tetrisgame.Controller.InputHandler;
 import com.sikoramarek.tetrisgame.view.BlockColors;
@@ -10,8 +9,6 @@ import com.sikoramarek.tetrisgame.view.BlockColors;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-
-import static java.lang.Thread.sleep;
 
 public class PlayField {
 

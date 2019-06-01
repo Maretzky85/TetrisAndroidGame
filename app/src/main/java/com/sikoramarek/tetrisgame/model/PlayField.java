@@ -27,7 +27,7 @@ public class PlayField {
         return running;
     }
 
-    public synchronized void update(){
+    public void update(){
         if (running && !InputHandler.pauseUpdate){
             Cell[] positions = activeBlock.getCells();
             for (Cell position : positions) {
@@ -64,7 +64,8 @@ public class PlayField {
 
         for (int i = 0; i < lines.length; i++) {
             if (lines[i] >= 10){
-                deleteLine(i);
+                final int lineToDelete = i;
+                PlayField.this.deleteLine(lineToDelete);
                 totalLines++;
                 scoreToAdd += 100;
             }
@@ -82,7 +83,7 @@ public class PlayField {
         }
     }
 
-    private synchronized void deleteLine(int y) {
+    private void deleteLine(int y) {
         InputHandler.pauseUpdate = true;
         Iterator<Cell> inactiveIterator = inactiveCells.iterator();
         while (inactiveIterator.hasNext()){

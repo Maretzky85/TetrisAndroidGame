@@ -6,8 +6,8 @@ import android.view.SurfaceHolder;
 import com.sikoramarek.tetrisgame.model.PlayField;
 import com.sikoramarek.tetrisgame.view.GameView;
 
-import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import static com.sikoramarek.tetrisgame.Controller.InputHandler.pauseUpdate;
 import static com.sikoramarek.tetrisgame.Controller.InputHandler.speed;
@@ -17,7 +17,7 @@ public class GameController extends Thread{
     private PlayField playField;
     private final GameView gameView;
 
-    private Queue<Inputs> cachedInputs;
+    private BlockingQueue<Inputs> cachedInputs;
 
     private long updateTime;
 
@@ -50,9 +50,7 @@ public class GameController extends Thread{
                 gameView.endGame();
                 this.running = false;
             }
-            while (!cachedInputs.isEmpty()){
-                moveExecute(cachedInputs.remove());
-            }
+
             if (System.currentTimeMillis() - updateTime > speed) {
                 if (pauseUpdate) {
                     pauseUpdate = false;
@@ -62,13 +60,16 @@ public class GameController extends Thread{
                 }
             }
             synchronized (surfaceHolder) {
-                    boolean drawed = false;
-                    while (!drawed) {
-                        drawed = this.gameView.updateView(
-                                playField.getActiveBlock(),
-                                playField.getInactiveCells());
-                    }
+                while (!cachedInputs.isEmpty()){
+                    moveExecute(cachedInputs.remove());
                 }
+                boolean drawed = false;
+                while (!drawed) {
+                    drawed = this.gameView.updateView(
+                            playField.getActiveBlock(),
+                            playField.getInactiveCells());
+                }
+            }
         }
     }
 
@@ -89,7 +90,7 @@ public class GameController extends Thread{
     }
 
 
-    void moveExecute(Inputs input) {
+    private void moveExecute(Inputs input) {
         switch (input) {
             case CLICK:
                 playField.click();

@@ -15,10 +15,10 @@ import android.view.View;
 import com.sikoramarek.tetrisgame.Controller.InputHandler;
 import com.sikoramarek.tetrisgame.Controller.Inputs;
 import com.sikoramarek.tetrisgame.model.Block;
+import com.sikoramarek.tetrisgame.model.BlockB;
 import com.sikoramarek.tetrisgame.model.Cell;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.sikoramarek.tetrisgame.Controller.InputHandler.currentAction;
@@ -184,6 +184,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                             null);
                 }
             }
+
+            Cell[] positions = BlockB.getNextPrev().getCells();
+            for (Cell cell: positions
+            ) {
+                canvas.drawBitmap(viewResources.getThumbnail(cell.getColor()),
+                        cell.getPoint().x*cellWidth+widthOffset,
+                        cell.getPoint().y*cellHeight,
+                        null);
+            }
+
             canvas.drawText("Score: "+ score, 50,50, fontPaint);
             if (endGame){
                 canvas.drawText(""+score, 0, 800, endFontPaint);

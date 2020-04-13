@@ -16,11 +16,16 @@ public class PlayField {
     private final ArrayList<Cell> inactiveCells;
     private int score = 0;
     private boolean running = true;
+    private Runnable refreshView;
 
 
     public PlayField(){
         inactiveCells = new ArrayList<>(20);
-        activeBlock = BlockB.getRandomBlock(5,1);
+        activeBlock = BlockB.getNext(5,1);
+    }
+
+    public void setRefreshView(Runnable refreshView) {
+        this.refreshView = refreshView;
     }
 
     public boolean isRunning(){
@@ -92,7 +97,8 @@ public class PlayField {
                 inactiveIterator.remove();
                 synchronized (this){
                     try {
-                        Thread.sleep(InputHandler.speed / inactiveCells.size());
+                        Thread.sleep(20);
+                        refreshView.run();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -113,7 +119,7 @@ public class PlayField {
         inactiveCells.addAll(Arrays.asList(positions));
         InputHandler.pauseUpdate = true;
         checkLines();
-        activeBlock = BlockB.getRandomBlock(5,1);
+        activeBlock = BlockB.getNext(5,1);
     }
 
     public void left() {

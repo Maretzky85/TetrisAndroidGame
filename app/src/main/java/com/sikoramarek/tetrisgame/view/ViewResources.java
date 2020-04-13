@@ -16,11 +16,13 @@ import static com.sikoramarek.tetrisgame.view.BlockColors.YELLOW;
 class ViewResources {
 
     private Bitmap[] activeImages;
+    private Bitmap[] activeImagesThumbs;
     private Bitmap[] inactiveImages;
 
     ViewResources(Resources resources){
 
         activeImages = new Bitmap[BlockColors.values().length];
+        activeImagesThumbs = new Bitmap[BlockColors.values().length];
         inactiveImages = new Bitmap[BlockColors.values().length];
 
         activeImages[RED.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.redblock);
@@ -78,6 +80,24 @@ class ViewResources {
         return inactiveImages[RED.getValue()];
     }
 
+    Bitmap getThumbnail(BlockColors color) {
+        switch (color) {
+            case BLUE:
+                return activeImagesThumbs[BLUE.getValue()];
+            case GREEN:
+                return activeImagesThumbs[GREEN.getValue()];
+            case ORANGE:
+                return activeImagesThumbs[ORANGE.getValue()];
+            case RED:
+                return activeImagesThumbs[RED.getValue()];
+            case VIOLET:
+                return activeImagesThumbs[VIOLET.getValue()];
+            case YELLOW:
+                return activeImagesThumbs[YELLOW.getValue()];
+        }
+        return activeImagesThumbs[RED.getValue()];
+    }
+
     void resizeImages( float width, float height){
         float widthToHeightRatio = ((float) width/ (float) height);
         float cellHeight = height / 20;
@@ -92,6 +112,10 @@ class ViewResources {
         }
         for (int i = 0; i < inactiveImages.length; i++) {
             inactiveImages[i] = Bitmap.createScaledBitmap(inactiveImages[i], (int) cellWidth, (int) cellHeight, false);
+        }
+
+        for (int i = 0; i < activeImages.length; i++) {
+            activeImagesThumbs[i] = Bitmap.createScaledBitmap(activeImages[i], (int) cellWidth / 5, (int) cellHeight / 5, false);
         }
     }
 }

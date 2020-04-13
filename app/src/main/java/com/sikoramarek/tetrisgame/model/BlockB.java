@@ -10,6 +10,8 @@ import java.util.Random;
 public class BlockB implements Block{
 
     private static Random randomGenerator = new Random();
+    private static Type nextType = getRandomType();
+    private static Block nextBlock = getNext(5 ,5);
     private int x, y;
     private Type type;
     private  Cell[] cells;
@@ -37,30 +39,42 @@ public class BlockB implements Block{
         return this;
     }
 
-    static Block getRandomBlock(int x, int y){
+    static Block getNext(int x, int y) {
+        Block next = getBlock(x, y, nextType);
+        nextType = getRandomType();
+        nextBlock = getBlock(5, 5, nextType);
+        return next;
+    }
+
+    public static Block getNextPrev() {
+        return nextBlock;
+    }
+
+    static Type getRandomType(){
         int random = randomGenerator.nextInt(7000);
         if (random < 1000){
-            return getBlock(x, y+2, Type.I);
+            return Type.I;
         }
         if (random < 2000){
-            return getBlock(x, y+1, Type.J);
+            return Type.J;
         }
         if (random < 3000){
-            return getBlock(x, y+1, Type.L);
+            return Type.L;
         }
         if (random < 4000){
-            return getBlock(x, y, Type.O);
+            return Type.O;
         }
         if (random < 5000){
-            return getBlock(x, y, Type.S);
+            return Type.S;
         }
         if (random < 6000){
-            return getBlock(x, y, Type.T);
+            return Type.T;
         }
         else {
-            return getBlock(x, y, Type.Z);
+            return Type.Z;
         }
     }
+
 
     private static Block getBlock(int x, int y, Type type){
         BlockB block = new BlockB();
@@ -131,10 +145,10 @@ public class BlockB implements Block{
                 .setX(x)
                 .setType(type)
                 .setCells(cells)
-                .finish();
+                .build();
     }
 
-    private Block finish() {
+    private Block build() {
         return this;
     }
 
@@ -238,7 +252,7 @@ public class BlockB implements Block{
                 .setX(savedStateBundle.getInt("XPosition"))
                 .setY(savedStateBundle.getInt("XPosition"))
                 .setCells(cells)
-                .finish();
+                .build();
     }
 
     private enum Type{

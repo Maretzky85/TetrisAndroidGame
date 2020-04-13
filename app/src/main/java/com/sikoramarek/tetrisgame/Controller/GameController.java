@@ -24,7 +24,9 @@ public class GameController extends Thread{
     private boolean running;
     private final SurfaceHolder surfaceHolder;
 
-    public GameController(GameView gameView){
+    private int lastSpeedUpdateScore = 0;
+
+    public GameController(final GameView gameView){
 
         this.gameView = gameView;
         this.surfaceHolder = gameView.getHolder();
@@ -32,12 +34,23 @@ public class GameController extends Thread{
         this.cachedInputs = new ArrayBlockingQueue<>(5);
         speed = 800;
 
-        InputHandler.attachController(this);
 
+        InputHandler.attachController(this);
         running = true;
 
         updateTime = System.currentTimeMillis();
 
+        playField.setRefreshView(new Runnable() {
+            @Override
+            public void run() {
+                boolean drawed = false;
+                while (!drawed) {
+                    drawed = gameView.updateView(
+                            playField.getActiveBlock(),
+                            playField.getInactiveCells());
+                }
+            }
+        });
     }
 
     @Override
@@ -74,18 +87,17 @@ public class GameController extends Thread{
     }
 
     private void adjustSpeedViaScore(int score) {
-        if (score > 10000){
-            speed = 200;
-        }else if (score > 8000){
-            speed = 300;
-        }else if (speed > 6000){
-            speed = 400;
-        }else if (score > 4000){
-            speed = 500;
-        }else if (score > 2000){
-            speed = 600;
-        }else if (score > 1000){
-            speed = 700;
+        if (speed < 50 || score == 0) {
+            return;
+        }
+        if (score - lastSpeedUpdateScore > 1000){
+            if (speed > 200){
+                speed -= 100;
+            } else {
+                speed -= 10;
+            }
+            lastSpeedUpdateScore = score;
+            System.out.println("speed = " + speed);
         }
     }
 

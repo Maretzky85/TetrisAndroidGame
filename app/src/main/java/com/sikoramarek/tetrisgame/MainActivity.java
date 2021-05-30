@@ -34,8 +34,8 @@ public class MainActivity extends Activity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, com.sikoramarek.tetrisgame.GameActivity.class);
-                startActivity(intent);
+                Intent game = new Intent(MainActivity.this, com.sikoramarek.tetrisgame.GameActivity.class);
+                startActivity(game);
             }
         });
 

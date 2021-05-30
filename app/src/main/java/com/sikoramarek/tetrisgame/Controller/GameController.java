@@ -9,15 +9,15 @@ import com.sikoramarek.tetrisgame.view.GameView;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import static com.sikoramarek.tetrisgame.Controller.InputHandler.pauseUpdate;
+import static com.sikoramarek.tetrisgame.Controller.InputHandler.pause;
 import static com.sikoramarek.tetrisgame.Controller.InputHandler.speed;
 
 public class GameController extends Thread{
 
-    private PlayField playField;
+    private final PlayField playField;
     private final GameView gameView;
 
-    private BlockingQueue<Inputs> cachedInputs;
+    private final BlockingQueue<Inputs> cachedInputs;
 
     private long updateTime;
 
@@ -33,7 +33,6 @@ public class GameController extends Thread{
         this.playField = new PlayField();
         this.cachedInputs = new ArrayBlockingQueue<>(5);
         speed = 800;
-
 
         InputHandler.attachController(this);
         running = true;
@@ -65,8 +64,8 @@ public class GameController extends Thread{
             }
 
             if (System.currentTimeMillis() - updateTime > speed) {
-                if (pauseUpdate) {
-                    pauseUpdate = false;
+                if (pause) {
+                    pause = false;
                 } else {
                     this.playField.update();
                     updateTime = System.currentTimeMillis();
@@ -97,7 +96,6 @@ public class GameController extends Thread{
                 speed -= 10;
             }
             lastSpeedUpdateScore = score;
-            System.out.println("speed = " + speed);
         }
     }
 

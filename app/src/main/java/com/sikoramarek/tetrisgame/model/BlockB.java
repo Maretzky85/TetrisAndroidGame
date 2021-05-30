@@ -5,11 +5,12 @@ import android.os.Bundle;
 
 import com.sikoramarek.tetrisgame.view.BlockColors;
 
+import java.util.Objects;
 import java.util.Random;
 
-public class BlockB implements Block{
+public class BlockB implements Block {
 
-    private static Random randomGenerator = new Random();
+    private static final Random randomGenerator = new Random();
     private static Type nextType = getRandomType();
     private static Block nextBlock = getNext(5 ,5);
     private int x, y;
@@ -46,7 +47,7 @@ public class BlockB implements Block{
         return next;
     }
 
-    public static Block getNextPrev() {
+    public static Block getNextPreview() {
         return nextBlock;
     }
 
@@ -240,7 +241,9 @@ public class BlockB implements Block{
         BlockB block = new BlockB();
         Cell[] cells = new Cell[4];
 
-        for (int i = 0; i < activeXList.length; i++) {
+        for (int i = 0; i < Objects.requireNonNull(activeXList).length; i++) {
+            assert activeColors != null;
+            assert activeYList != null;
             cells[i] = new Cell(
                     activeXList[i],
                     activeYList[i],
@@ -257,9 +260,8 @@ public class BlockB implements Block{
 
     private enum Type{
         T(0), I(1), J(2), L(3), O(4), S(5), Z(6);
-        private int value;
+
         Type(int value){
-            this.value = value;
         }
     }
 }

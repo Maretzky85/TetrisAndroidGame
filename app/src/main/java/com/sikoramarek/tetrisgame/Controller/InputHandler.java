@@ -2,7 +2,7 @@ package com.sikoramarek.tetrisgame.Controller;
 
 public class InputHandler {
 
-    public static boolean pauseUpdate = false;
+    public static boolean pause = false;
 
     private static GameController gameController;
 

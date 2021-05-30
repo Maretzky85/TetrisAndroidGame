@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.sikoramarek.tetrisgame.Controller.GameController;
 import com.sikoramarek.tetrisgame.view.GameView;
@@ -15,6 +16,7 @@ import com.sikoramarek.tetrisgame.view.GameView;
 public class GameActivity extends Activity {
 
     GameController gameController;
+    private long lastBackPressedTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,5 +43,17 @@ public class GameActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        long timeNow = System.currentTimeMillis();
+        long timePressed = timeNow - lastBackPressedTime;
+        if(timePressed < 500) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(getApplicationContext(), "Press back again to Exit", Toast.LENGTH_LONG).show();
+            lastBackPressedTime = System.currentTimeMillis();
+        }
     }
 }

@@ -33,7 +33,7 @@ public class PlayField {
     }
 
     public void update(){
-        if (running && !InputHandler.pauseUpdate){
+        if (running && !InputHandler.pause){
             Cell[] positions = activeBlock.getCells();
             for (Cell position : positions) {
                 if (position.getPoint().y == 19) {
@@ -89,7 +89,7 @@ public class PlayField {
     }
 
     private void deleteLine(int y) {
-        InputHandler.pauseUpdate = true;
+        InputHandler.pause = true;
         Iterator<Cell> inactiveIterator = inactiveCells.iterator();
         while (inactiveIterator.hasNext()){
             Cell cell = inactiveIterator.next();
@@ -117,7 +117,7 @@ public class PlayField {
     private void placeActiveBlock(Block block) {
         Cell[] positions = block.getCells();
         inactiveCells.addAll(Arrays.asList(positions));
-        InputHandler.pauseUpdate = true;
+        InputHandler.pause = true;
         checkLines();
         activeBlock = BlockB.getNext(5,1);
     }

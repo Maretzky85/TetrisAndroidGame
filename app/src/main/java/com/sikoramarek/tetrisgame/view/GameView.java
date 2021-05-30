@@ -36,12 +36,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private ViewResources viewResources;
 
-    private float screenHeight = HEIGHT;
-    private float screenWidth = WIDTH;
+    private final float screenHeight = HEIGHT;
+    private final float screenWidth = WIDTH;
 
     private float cellWidth = screenWidth/10;
-    private float cellHeight = screenHeight/20;
-    private float widthToHeightRatio = WIDTH / HEIGHT;
+    private final float cellHeight = screenHeight/20;
+    private final float widthToHeightRatio = WIDTH / HEIGHT;
 
     private int SENSITIVITY = 80;
 
@@ -55,7 +55,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private boolean takingBlockDown = false;
     private boolean endGame = false;
 
-    private SharedPreferences sharedPreferences = getContext()
+    private final SharedPreferences sharedPreferences = getContext()
             .getSharedPreferences("Score", MODE_PRIVATE);
     private int widthOffset = 0;
 
@@ -110,7 +110,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                                 InputHandler.move(Inputs.LEFT);
                                 currentAction = MotionEvent.ACTION_MOVE;
                                 break;
-                            }else
+                            } else
                             if (deltaX < -alteredSensitivity){
                                 touchXPos = x;
                                 InputHandler.move(Inputs.RIGHT);
@@ -185,7 +185,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
 
-            Cell[] positions = BlockB.getNextPrev().getCells();
+            Cell[] positions = BlockB.getNextPreview().getCells();
             for (Cell cell: positions
             ) {
                 canvas.drawBitmap(viewResources.getThumbnail(cell.getColor()),

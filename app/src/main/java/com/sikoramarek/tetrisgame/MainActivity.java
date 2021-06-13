@@ -1,8 +1,11 @@
 package com.sikoramarek.tetrisgame;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -13,12 +16,15 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     Button btnStart;
+    Button btnOptions;
     TextView tvHighestScore;
     SharedPreferences sharedPreferences;
+    public static Context contextOfApplication;
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        contextOfApplication = getApplicationContext();
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -26,13 +32,19 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         btnStart = findViewById(R.id.btnStart);
+        btnOptions = findViewById(R.id.btnOptions);
         tvHighestScore = findViewById(R.id.tvHighestScore);
         sharedPreferences = getApplicationContext().getSharedPreferences("Score", MODE_PRIVATE);
-
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         updateScore();
 
         btnStart.setOnClickListener(v -> {
             Intent game = new Intent(MainActivity.this, GameActivity.class);
+            startActivity(game);
+        });
+
+        btnOptions.setOnClickListener(v -> {
+            Intent game = new Intent(MainActivity.this, OptionsActivity.class);
             startActivity(game);
         });
 
@@ -42,6 +54,10 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         updateScore();
+    }
+
+    public static Context getContextOfApplication(){
+        return contextOfApplication;
     }
 
     private void updateScore() {

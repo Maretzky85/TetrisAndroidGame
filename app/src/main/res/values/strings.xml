@@ -5,4 +5,12 @@
     <string name="hscore">Highest Score:</string>
     <string name="start">Start</string>
     <string name="exitPrompt">Double click back to exit</string>
+    <string name="options">options</string>
+    <string name="rotationInfo">Block rotation direction</string>
+    <string name="orientationInfo">game orientation</string>
+    <string name="right">Right</string>
+    <string name="left">Left</string>
+    <string name="gameOrientationHorizontal">Horizontal</string>
+    <string name="gameOrientationVertical">Vertical</string>
+    <string name="gameOrientationFree">auto orientation</string>
 </resources>

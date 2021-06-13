@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.sikoramarek.tetrisgame.Controller.GameController;
+import com.sikoramarek.tetrisgame.common.GameOptions;
 import com.sikoramarek.tetrisgame.view.GameView;
 
 public class GameActivity extends Activity {
@@ -18,18 +19,11 @@ public class GameActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GameOptions gameOptions = new GameOptions();
         super.onCreate(savedInstanceState);
+        this.setRequestedOrientation(gameOptions.getCurrentGameOrientation());
 
         hideSystemUI();
-
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         GameView gameView = new GameView(this);
         setContentView(gameView);
@@ -79,5 +73,11 @@ public class GameActivity extends Activity {
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }

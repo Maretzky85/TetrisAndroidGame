@@ -13,7 +13,6 @@ public class Cell {
         point = new Point();
         point.set(x,y);
         this.color = color;
-
     }
 
     public BlockColors getColor() {

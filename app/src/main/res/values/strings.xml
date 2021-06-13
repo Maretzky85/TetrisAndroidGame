@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">TetrisGame</string>
     <string name="highestScore">Highest score:</string>
-    <string name="NoHigherScore">No Higher Score yet...</string>
+    <string name="NoHighScore">No Score yet…</string>
     <string name="hscore">Highest Score:</string>
     <string name="start">Start</string>
+    <string name="exitPrompt">Double click back to exit</string>
 </resources>

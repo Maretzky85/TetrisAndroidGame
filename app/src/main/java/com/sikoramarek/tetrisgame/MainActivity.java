@@ -31,12 +31,9 @@ public class MainActivity extends Activity {
 
         updateScore();
 
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent game = new Intent(MainActivity.this, com.sikoramarek.tetrisgame.GameActivity.class);
-                startActivity(game);
-            }
+        btnStart.setOnClickListener(v -> {
+            Intent game = new Intent(MainActivity.this, GameActivity.class);
+            startActivity(game);
         });
 
     }
@@ -47,12 +44,18 @@ public class MainActivity extends Activity {
         updateScore();
     }
 
-    private void updateScore(){
+    private void updateScore() {
+        String scoreText = checkHighScoreAndReturnString();
+        tvHighestScore.setText(scoreText);
+        tvHighestScore.setVisibility(View.VISIBLE);
+    }
+
+    private String checkHighScoreAndReturnString() {
         int score = sharedPreferences.getInt("HighestScore", 0);
-        if (score > 0){
-            String scoreText = getString(R.string.hscore)+sharedPreferences.getInt("HighestScore", 0);
-            tvHighestScore.setText(scoreText);
-            tvHighestScore.setVisibility(View.VISIBLE);
+        if (score > 0) {
+            return getString(R.string.hscore) + score;
+        } else {
+            return getString(R.string.NoHighScore);
         }
     }
 }

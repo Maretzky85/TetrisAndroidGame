@@ -12,8 +12,8 @@ import com.sikoramarek.tetrisgame.common.GameOptions;
 
 public class OptionsActivity extends Activity {
     private GameOptions gameOptions;
-    TextView tvRotation;
-    TextView tvGameOrientation;
+    private TextView tvRotation;
+    private TextView tvGameOrientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

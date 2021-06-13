@@ -18,7 +18,8 @@ public class BlockB implements Block {
     private static Type nextType = getRandomType();
     private static Block nextBlock = getNext(5, 5);
     private final int currentBlockRotation = new GameOptions().getCurrentBlockRotation();
-    private int boardXPosition, boardYPosition;
+    private int boardXPosition;
+    private int boardYPosition;
     private Type type;
     private Cell[] cells;
 

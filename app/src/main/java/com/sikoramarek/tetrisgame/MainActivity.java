@@ -15,10 +15,10 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-    Button btnStart;
-    Button btnOptions;
-    TextView tvHighestScore;
-    SharedPreferences sharedPreferences;
+    private Button btnStart;
+    private Button btnOptions;
+    private TextView tvHighestScore;
+    private SharedPreferences sharedPreferences;
     public static Context contextOfApplication;
 
     @SuppressLint("SourceLockedOrientationActivity")

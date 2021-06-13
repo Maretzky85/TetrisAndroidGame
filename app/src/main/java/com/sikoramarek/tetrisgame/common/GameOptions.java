@@ -19,8 +19,8 @@ public class GameOptions {
     public final static int GAME_ORIENTATION_DEFAULT = GAME_ORIENTATION_FREE;
     public final static String SHARED_PREFERENCES_GAME_ORIENTATION_ID = "SP_GAME_ORIENTATION_ID";
     public final static String SHARED_PREFERENCES_BLOCK_ROTATION_ID = "SP_GAME_BLOCK_ROTATION_ID";
-    Context context;
-    SharedPreferences gameOptions;
+    private final Context context;
+    private final SharedPreferences gameOptions;
 
     public GameOptions() {
         this.context = MainActivity.getContextOfApplication();
@@ -28,7 +28,6 @@ public class GameOptions {
     }
 
     public int getCurrentBlockRotation() {
-        validateAvailableContext();
         return gameOptions.getInt(SHARED_PREFERENCES_BLOCK_ROTATION_ID, BLOCK_ROTATION_DEFAULT);
     }
 
@@ -59,12 +58,10 @@ public class GameOptions {
     }
 
     public int getCurrentGameOrientation() {
-        validateAvailableContext();
         return gameOptions.getInt(SHARED_PREFERENCES_GAME_ORIENTATION_ID, GAME_ORIENTATION_DEFAULT);
     }
 
     public String getCurrentGameOrientationLabel() {
-        validateAvailableContext();
         int gameOrientation = getCurrentGameOrientation();
         switch (gameOrientation) {
             case GAME_ORIENTATION_FREE:
@@ -78,7 +75,6 @@ public class GameOptions {
     }
 
     public void changeGameOrientation() {
-        validateAvailableContext();
         int gameOrientation = gameOptions.getInt(
                 SHARED_PREFERENCES_GAME_ORIENTATION_ID,
                 GAME_ORIENTATION_DEFAULT);
@@ -100,12 +96,6 @@ public class GameOptions {
                         SHARED_PREFERENCES_GAME_ORIENTATION_ID,
                         GAME_ORIENTATION_VERTICAL).apply();
                 break;
-        }
-    }
-
-    private void validateAvailableContext() {
-        if (context == null) {
-            throw new RuntimeException("GameOptions must have context");
         }
     }
 }

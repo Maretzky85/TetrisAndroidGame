@@ -21,6 +21,20 @@
         tools:layout_editor_absoluteX="70dp"
         tools:layout_editor_absoluteY="138dp" />
 
+    <Button
+        android:id="@+id/btnOptions"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/options"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="70dp"
+        tools:layout_editor_absoluteY="138dp" />
+
     <TextView
         android:id="@+id/tvHighestScore"
         android:layout_width="match_parent"

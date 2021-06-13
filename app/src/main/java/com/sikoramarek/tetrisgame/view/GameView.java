@@ -34,7 +34,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     int score = 0;
 
-    private ViewResources viewResources;
+    private final ViewResources viewResources;
 
     private final float screenHeight = HEIGHT;
     private final float screenWidth = WIDTH;
@@ -43,7 +43,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private final float cellHeight = screenHeight/20;
     private final float widthToHeightRatio = WIDTH / HEIGHT;
 
-    private int SENSITIVITY = 80;
+    private final int SENSITIVITY = 80;
 
     private long touchTime;
     private int touchXPos;

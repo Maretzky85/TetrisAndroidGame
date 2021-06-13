@@ -15,11 +15,11 @@ import static com.sikoramarek.tetrisgame.view.BlockColors.YELLOW;
 
 class ViewResources {
 
-    private Bitmap[] activeImages;
-    private Bitmap[] activeImagesThumbs;
-    private Bitmap[] inactiveImages;
+    private final Bitmap[] activeImages;
+    private final Bitmap[] activeImagesThumbs;
+    private final Bitmap[] inactiveImages;
 
-    ViewResources(Resources resources){
+    ViewResources(Resources resources) {
 
         activeImages = new Bitmap[BlockColors.values().length];
         activeImagesThumbs = new Bitmap[BlockColors.values().length];
@@ -29,7 +29,7 @@ class ViewResources {
         inactiveImages[RED.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.redblock_i);
 
         activeImages[BLUE.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.blueblock);
-        inactiveImages[BLUE.getValue()]= BitmapFactory.decodeResource(resources, R.drawable.blueblock_i);
+        inactiveImages[BLUE.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.blueblock_i);
 
         activeImages[GREEN.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.greenblock);
         inactiveImages[GREEN.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.greenblock_i);
@@ -44,7 +44,7 @@ class ViewResources {
         inactiveImages[YELLOW.getValue()] = BitmapFactory.decodeResource(resources, R.drawable.yellowblock_i);
     }
 
-    Bitmap getActiveBlock(BlockColors color) {
+    protected Bitmap getActiveBlock(BlockColors color) {
         switch (color) {
             case BLUE:
                 return activeImages[BLUE.getValue()];
@@ -62,7 +62,7 @@ class ViewResources {
         return activeImages[RED.getValue()];
     }
 
-    Bitmap getInactiveBlock(BlockColors color) {
+    protected Bitmap getInactiveBlock(BlockColors color) {
         switch (color) {
             case BLUE:
                 return inactiveImages[BLUE.getValue()];
@@ -80,7 +80,7 @@ class ViewResources {
         return inactiveImages[RED.getValue()];
     }
 
-    Bitmap getThumbnail(BlockColors color) {
+    protected Bitmap getThumbnail(BlockColors color) {
         switch (color) {
             case BLUE:
                 return activeImagesThumbs[BLUE.getValue()];
@@ -98,13 +98,13 @@ class ViewResources {
         return activeImagesThumbs[RED.getValue()];
     }
 
-    void resizeImages( float width, float height){
-        float widthToHeightRatio = ((float) width/ (float) height);
+    protected void resizeImages(float width, float height) {
+        float widthToHeightRatio = (width / height);
         float cellHeight = height / 20;
         float cellWidth = width / 10;
 
-        if (widthToHeightRatio > 1){
-            cellWidth =Math.abs((int)(cellWidth*(2-widthToHeightRatio)));
+        if (widthToHeightRatio > 1) {
+            cellWidth = Math.abs((int) (cellWidth * (2 - widthToHeightRatio)));
         }
 
         for (int i = 0; i < activeImages.length; i++) {

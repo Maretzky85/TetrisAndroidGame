@@ -1,5 +1,5 @@
-package com.sikoramarek.tetrisgame.Controller;
+package com.sikoramarek.tetrisgame.controller;
 
 public enum Inputs {
-    CLICK, LEFT, RIGHT, DOWN, RESTART
+    CLICK, LEFT, RIGHT, DOWN
 }

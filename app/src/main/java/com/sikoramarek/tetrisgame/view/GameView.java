@@ -12,8 +12,8 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import com.sikoramarek.tetrisgame.Controller.InputHandler;
-import com.sikoramarek.tetrisgame.Controller.Inputs;
+import com.sikoramarek.tetrisgame.controller.InputHandlerHelper;
+import com.sikoramarek.tetrisgame.controller.Inputs;
 import com.sikoramarek.tetrisgame.model.Block;
 import com.sikoramarek.tetrisgame.model.BlockB;
 import com.sikoramarek.tetrisgame.model.Cell;
@@ -21,16 +21,16 @@ import com.sikoramarek.tetrisgame.model.Cell;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.sikoramarek.tetrisgame.Controller.InputHandler.currentAction;
+import static com.sikoramarek.tetrisgame.controller.InputHandlerHelper.currentAction;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    float WIDTH = Resources.getSystem().getDisplayMetrics().widthPixels;
-    float HEIGHT = Resources.getSystem().getDisplayMetrics().heightPixels;
+    private final float WIDTH = Resources.getSystem().getDisplayMetrics().widthPixels;
+    private final float HEIGHT = Resources.getSystem().getDisplayMetrics().heightPixels;
 
-    Paint fontPaint = new Paint();
-    Paint endFontPaint = new Paint();
-    Paint borderPaint = new Paint();
+    private final Paint fontPaint = new Paint();
+    private final Paint endFontPaint = new Paint();
+    private final Paint borderPaint = new Paint();
 
     int score = 0;
 
@@ -107,18 +107,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
                             if (deltaX > alteredSensitivity){
                                 touchXPos = x;
-                                InputHandler.move(Inputs.LEFT);
+                                InputHandlerHelper.move(Inputs.LEFT);
                                 currentAction = MotionEvent.ACTION_MOVE;
                                 break;
                             } else
                             if (deltaX < -alteredSensitivity){
                                 touchXPos = x;
-                                InputHandler.move(Inputs.RIGHT);
+                                InputHandlerHelper.move(Inputs.RIGHT);
                                 break;
                             }else
                             if (deltaY < -SENSITIVITY){
                                 touchYPos = y;
-                                InputHandler.move(Inputs.DOWN);
+                                InputHandlerHelper.move(Inputs.DOWN);
                                 currentAction = MotionEvent.ACTION_MOVE;
                                 takingBlockDown = true;
                                 break;
@@ -127,10 +127,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         break;
                     case MotionEvent.ACTION_UP:
                         if (System.currentTimeMillis() - touchTime < 100 && currentAction == MotionEvent.ACTION_DOWN){
-                            InputHandler.move(Inputs.CLICK);
+                            InputHandlerHelper.move(Inputs.CLICK);
                         }
                         currentAction = -1;
                         takingBlockDown = false;
+                        break;
+                    default:
                         break;
                 }
                 return true;
@@ -144,19 +146,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             sharedPreferences.edit().putInt("HighestScore", score).apply();
         }
         endGame = true;
-    }
-
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
     }
 
     @Override
@@ -232,5 +221,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public void setScore(int score){
         this.score = score;
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        //TODO
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        //TODO
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        //TODO
     }
 }

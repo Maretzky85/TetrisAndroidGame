@@ -1,0 +1,2 @@
+# TetrisAndroidGame
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/85b5991dae9c4969b23ced015f576ee8)](https://app.codacy.com/gh/Maretzky85/TetrisAndroidGame?utm_source=github.com&utm_medium=referral&utm_content=Maretzky85/TetrisAndroidGame&utm_campaign=Badge_Grade_Settings)

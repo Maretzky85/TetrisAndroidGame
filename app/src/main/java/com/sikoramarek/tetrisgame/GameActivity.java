@@ -8,7 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.sikoramarek.tetrisgame.Controller.GameController;
+import com.sikoramarek.tetrisgame.controller.GameController;
 import com.sikoramarek.tetrisgame.common.GameOptions;
 import com.sikoramarek.tetrisgame.view.GameView;
 

@@ -3,7 +3,7 @@ package com.sikoramarek.tetrisgame.model;
 import android.graphics.Point;
 import android.os.Bundle;
 
-import com.sikoramarek.tetrisgame.Controller.InputHandler;
+import com.sikoramarek.tetrisgame.controller.InputHandlerHelper;
 import com.sikoramarek.tetrisgame.view.BlockColors;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class PlayField {
     }
 
     public void update(){
-        if (running && !InputHandler.pause){
+        if (running && !InputHandlerHelper.pause){
             Cell[] positions = activeBlock.getCells();
             for (Cell position : positions) {
                 if (position.getPoint().y == 19) {
@@ -89,7 +89,7 @@ public class PlayField {
     }
 
     private void deleteLine(int y) {
-        InputHandler.pause = true;
+        InputHandlerHelper.pause = true;
         Iterator<Cell> inactiveIterator = inactiveCells.iterator();
         while (inactiveIterator.hasNext()){
             Cell cell = inactiveIterator.next();
@@ -117,7 +117,7 @@ public class PlayField {
     private void placeActiveBlock(Block block) {
         Cell[] positions = block.getCells();
         inactiveCells.addAll(Arrays.asList(positions));
-        InputHandler.pause = true;
+        InputHandlerHelper.pause = true;
         checkLines();
         activeBlock = BlockB.getNext(5,1);
     }

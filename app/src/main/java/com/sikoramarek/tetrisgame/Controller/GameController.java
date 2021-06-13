@@ -1,4 +1,4 @@
-package com.sikoramarek.tetrisgame.Controller;
+package com.sikoramarek.tetrisgame.controller;
 
 import android.os.Bundle;
 import android.view.SurfaceHolder;
@@ -9,8 +9,8 @@ import com.sikoramarek.tetrisgame.view.GameView;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import static com.sikoramarek.tetrisgame.Controller.InputHandler.pause;
-import static com.sikoramarek.tetrisgame.Controller.InputHandler.speed;
+import static com.sikoramarek.tetrisgame.controller.InputHandlerHelper.pause;
+import static com.sikoramarek.tetrisgame.controller.InputHandlerHelper.speed;
 
 public class GameController extends Thread{
 
@@ -34,7 +34,7 @@ public class GameController extends Thread{
         this.cachedInputs = new ArrayBlockingQueue<>(5);
         speed = 800;
 
-        InputHandler.attachController(this);
+        InputHandlerHelper.attachController(this);
         running = true;
 
         updateTime = System.currentTimeMillis();
